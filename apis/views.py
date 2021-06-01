@@ -2,9 +2,10 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from apis.models import Event, EventRegistration
-from apis.serializers import EventSerializer, EventRegistrationSerializer
+from apis.models import Event, EventRegistration 
+from apis.serializers import EventSerializer, EventRegistrationSerializer, AccountSerializer
 from rest_framework.permissions import IsAuthenticated
+
 
 
 # Create your views here.
@@ -50,3 +51,16 @@ def event_detail(request, id, format=None):
     elif request.method == 'DELETE':
         event_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['POST'])
+def user_registration(request,format = None):
+    serializer = AccountSerializer(data = request.data)
+    if serializer.is_valid():
+        instance = serializer.save()
+        instance.set_password(instance.password)
+        instance.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
