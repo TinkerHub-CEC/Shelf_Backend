@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from rest_framework import status
+from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from apis.models import Event, EventRegistration
-from apis.serializers import EventSerializer, EventRegistrationSerializer
+from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -15,7 +14,7 @@ def event_list(request, format=None):
     List all events, or create a new event.
     """
     if request.method == 'GET':
-        events = Event.objects.all()
+        events = Event.objects.order_by('-datetime')
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
 
@@ -50,3 +49,22 @@ def event_detail(request, id, format=None):
     elif request.method == 'DELETE':
         event_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+#@permission_classes((IsAuthenticated, ))
+def event_registrations(request, id, format=None):
+    """
+    View registered users of a particular event, if event id is provided
+    """
+    try:
+        event_obj = Event.objects.get(id=id)
+        registered_users = event_obj.registrations.all()
+    except Event.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
+        return Response(serializer.data)
+
+    
