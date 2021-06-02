@@ -67,4 +67,20 @@ def event_registrations(request, id, format=None):
         serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
         return Response(serializer.data)
 
-    
+@api_view(['POST', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
+def register_for_event(request, id, format=None):
+    """
+    Create a new registration for an event or delete an existing registration
+    """
+    try:
+        event_obj = Event.objects.get(id=id)
+    except Event.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        event_obj.registrations.add(request.user)
+        return Response(status=status.HTTP_201_CREATED)
+    if request.method == 'DELETE' :
+        event_obj.registrations.remove(request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)

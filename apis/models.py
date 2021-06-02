@@ -9,6 +9,8 @@ class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0)
+    class Meta:
+        unique_together = (('user','event'),)
 
 class Event(models.Model) :
     title = models.CharField(max_length=30)
