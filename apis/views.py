@@ -7,6 +7,17 @@ from rest_framework.permissions import IsAuthenticated
 
 
 # Create your views here.
+@api_view(['POST'])
+def user_registration(request,format = None):
+    serializer = UserSerializer(data = request.data)
+    if serializer.is_valid():
+        instance = serializer.save()
+        instance.set_password(instance.password)
+        instance.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET', 'POST'])
 #@permission_classes((IsAuthenticated, ))
 def event_list(request, format=None):

@@ -68,6 +68,7 @@ TEMPLATES = [
         },
     },
 ]
+AUTH_USER_MODEL = 'apis.User'
 
 WSGI_APPLICATION = 'Shelf_Backend.wsgi.application'
 
