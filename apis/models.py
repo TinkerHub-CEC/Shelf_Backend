@@ -112,5 +112,8 @@ class Event(models.Model) :
     location = models.CharField(max_length=30)
     max_participants = models.IntegerField()
     description = models.TextField()
+    poster = models.ImageField(upload_to='uploads/events')
+    reg_open_date = models.DateTimeField()
+    reg_close_date = models.DateTimeField()
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
 

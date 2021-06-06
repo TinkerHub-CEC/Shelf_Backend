@@ -1,6 +1,7 @@
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from apis import serializers
 from apis.models import Event, EventRegistration
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated

@@ -4,9 +4,6 @@ from apis.models import Event, EventRegistration
 from django.contrib.auth.admin import UserAdmin
 from apis.models import User
 # Register your models here.
-admin.site.register(Event)
-admin.site.register(EventRegistration)
-
 
 class UserAdmin(UserAdmin):
     add_form = RegistrationForm
@@ -33,3 +30,5 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.register(User,UserAdmin)
+admin.site.register(Event)
+admin.site.register(EventRegistration)
