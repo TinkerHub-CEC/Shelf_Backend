@@ -82,9 +82,6 @@ class User(AbstractBaseUser):
         )
 
 
-    
-
-
     USERNAME_FIELD  = 'email'
     REQUIRED_FIELDS = ['username']
     
@@ -99,10 +96,11 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self,app_label):
         return True
+        
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
-    attendance = models.IntegerField(default=0)
+    attendance = models.BooleanField(default=False)
     class Meta:
         unique_together = (('user','event'),)
 

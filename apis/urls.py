@@ -20,8 +20,9 @@ urlpatterns = [
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('events/', views.event_list),
-    path('events/<int:id>', views.event_detail),
+    path('events/<int:id>/', views.event_detail),
     path('events/<int:id>/registrations/', views.event_registrations),
     path('events/<int:id>/register/', views.register_for_event),
+    path('events/<int:id>/attendance/', views.mark_attendance),
     path('users/',views.user_registration),
 ]

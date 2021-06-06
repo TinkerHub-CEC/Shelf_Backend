@@ -1,3 +1,4 @@
+from functools import partial
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -52,7 +53,7 @@ def event_detail(request, id, format=None):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = EventSerializer(event_obj, data=request.data)
+        serializer = EventSerializer(event_obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -96,3 +97,17 @@ def register_for_event(request, id, format=None):
     if request.method == 'DELETE' :
         event_obj.registrations.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def mark_attendance(request,id):
+    try:
+        reg_obj = EventRegistration.objects.get(user=request.user, event=id)
+    except EventRegistration.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
