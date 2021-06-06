@@ -1,9 +1,13 @@
+from functools import partial
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from apis.models import Event, EventRegistration
+from apis import serializers
+from apis.models import Event, EventRegistration,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
+
+
 
 
 # Create your views here.
@@ -95,3 +99,21 @@ def register_for_event(request, id, format=None):
     if request.method == 'DELETE' :
         event_obj.registrations.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PUT'])
+@permission_classes((IsAuthenticated, ))
+def upload_photo(request,id,format=None):
+
+    try:
+        instance = EventRegistration.objects.get(event = id,user = request.user)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = EventRegistrationSerializer(instance,data = request.data,partial = True)   
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+

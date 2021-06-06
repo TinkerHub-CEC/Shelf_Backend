@@ -103,6 +103,7 @@ class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0)
+    photosubmission = models.ImageField(upload_to='pic',max_length = 200,)
     class Meta:
         unique_together = (('user','event'),)
 
