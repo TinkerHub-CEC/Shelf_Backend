@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from apis.models import Event, EventRegistration
+from apis.models import User, Event, EventRegistration
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
@@ -25,15 +24,18 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 class UserSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'email', 'password']
+        fields = ['id','username', 'last_name', 'email', 'password','roll_no','semester','batch']
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['id','title', 'datetime', 'location', 'max_participants', 'description']
+        fields = ['id','title', 'datetime', 'location','max_participants', 'description', 'reg_open_date',
+                    'reg_close_date', 'poster']
 
 class EventRegistrationSerializer(serializers.ModelSerializer):
     class Meta :
         model = EventRegistration
-        fields = ['id', 'user', 'event', 'attendance']
+        fields = ['id','photosubmission','user','event','attendance']
 
+
+    

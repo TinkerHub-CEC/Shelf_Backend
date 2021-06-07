@@ -1,13 +1,28 @@
+from functools import partial
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from apis.models import Event, EventRegistration
+from apis import serializers
+from apis.models import Event, EventRegistration,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 
 
+
+
 # Create your views here.
+@api_view(['POST'])
+def user_registration(request,format = None):
+    serializer = UserSerializer(data = request.data)
+    if serializer.is_valid():
+        instance = serializer.save()
+        instance.set_password(instance.password)
+        instance.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET', 'POST'])
 #@permission_classes((IsAuthenticated, ))
 def event_list(request, format=None):
@@ -41,7 +56,7 @@ def event_detail(request, id, format=None):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = EventSerializer(event_obj, data=request.data)
+        serializer = EventSerializer(event_obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -132,3 +147,34 @@ def user_details(request, id, format=None):
     elif request.method == 'DELETE':
         user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def mark_attendance(request,id):
+    try:
+        reg_obj = EventRegistration.objects.get(user=request.user, event=id)
+    except EventRegistration.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+@permission_classes((IsAuthenticated, ))
+def upload_photo(request,id,format=None):
+
+    try:
+        instance = EventRegistration.objects.get(event = id,user = request.user)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = EventRegistrationSerializer(instance,data = request.data,partial = True)   
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
