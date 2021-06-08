@@ -6,6 +6,7 @@ from apis import serializers
 from apis.models import Event, EventRegistration,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
 
 
 
@@ -100,6 +101,52 @@ def register_for_event(request, id, format=None):
         event_obj.registrations.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view([ 'GET' , 'POST' ])
+def user_list(request,format=None):
+    """
+    List all Users. Create new User object.
+    """
+    #Get all users' details
+    if request.method == 'GET':
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    #Create new User object
+    elif request.method == 'POST':
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def user_details(request, id, format=None):
+    """
+    Retrieve, delete, update a single users' details
+    """
+    try:
+        user_obj = User.objects.get(id=id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    #Get details of a single user
+    if request.method == 'GET':
+        serializer = UserSerializer(user_obj)
+        return Response(serializer.data)
+
+    #Update details of a single user
+    elif request.method == 'PUT':
+        serializer = UserSerializer(user_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    #Delete details of a single user
+    elif request.method == 'DELETE':
+        user_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
