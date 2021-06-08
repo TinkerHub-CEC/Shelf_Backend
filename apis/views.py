@@ -6,21 +6,8 @@ from apis import serializers
 from apis.models import Event, EventRegistration,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
 
 
-
-
-# Create your views here.
-@api_view(['POST'])
-def user_registration(request,format = None):
-    serializer = UserSerializer(data = request.data)
-    if serializer.is_valid():
-        instance = serializer.save()
-        instance.set_password(instance.password)
-        instance.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
@@ -40,6 +27,7 @@ def event_list(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET', 'PUT', 'DELETE'])
 #@permission_classes((IsAuthenticated, ))
 def event_detail(request, id, format=None):
@@ -101,19 +89,13 @@ def register_for_event(request, id, format=None):
         event_obj.registrations.remove(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view([ 'GET' , 'POST' ])
+@api_view([ 'POST' ])
 def user_list(request,format=None):
     """
-    List all Users. Create new User object.
+    Create new User object.
     """
-    #Get all users' details
-    if request.method == 'GET':
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
     #Create new User object
-    elif request.method == 'POST':
+    if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -137,7 +119,7 @@ def user_details(request, id, format=None):
 
     #Update details of a single user
     elif request.method == 'PUT':
-        serializer = UserSerializer(user_obj, data=request.data)
+        serializer = UserSerializer(user_obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

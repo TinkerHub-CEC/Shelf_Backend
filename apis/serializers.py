@@ -24,7 +24,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 class UserSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'last_name', 'email', 'password','roll_no','semester','batch']
+        fields = ['id','username', 'first_name', 'last_name', 'email', 'password','roll_no','semester','batch']
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
