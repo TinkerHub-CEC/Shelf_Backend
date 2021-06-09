@@ -1,4 +1,5 @@
 .vscode/
 apis/__pycache__/
+apis/migrations/__pycache__/
 Shelf_Backend/__pycache__/
 media/
