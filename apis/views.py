@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import partial
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
@@ -176,3 +177,13 @@ def user_registered_events(request, id, format=None):
     if request.method == 'GET':
         serializer = EventSerializer(registered_events, many=True)
         return Response(serializer.data,status=status.HTTP_302_FOUND)
+        
+@api_view(['GET'])
+#@permission_classes((IsAuthenticated, ))
+def active_registrations(request,format=None):
+    if request.method == 'GET':
+        active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+        serializer = EventSerializer(active_registrations, many=True)
+        return Response(serializer.data)
+
+
