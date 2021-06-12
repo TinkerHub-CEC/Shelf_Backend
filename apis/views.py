@@ -173,8 +173,6 @@ def user_registered_events(request, id, format=None):
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    print("Inside")
-    
     if request.method == 'GET':
         serializer = EventSerializer(registered_events, many=True)
         return Response(serializer.data,status=status.HTTP_302_FOUND)
