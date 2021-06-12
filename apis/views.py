@@ -163,7 +163,7 @@ def upload_photo(request,id,format=None):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view([ 'GET' ])
-@permission_classes((IsAuthenticated, ))
+#@permission_classes((IsAuthenticated, ))
 def user_registered_events(request, id, format=None):
     """
     Function that returns all the events that a user is registered to.
@@ -177,7 +177,7 @@ def user_registered_events(request, id, format=None):
     if request.method == 'GET':
         serializer = EventSerializer(registered_events, many=True)
         return Response(serializer.data,status=status.HTTP_302_FOUND)
-        
+
 @api_view(['GET'])
 #@permission_classes((IsAuthenticated, ))
 def active_registrations(request,format=None):
