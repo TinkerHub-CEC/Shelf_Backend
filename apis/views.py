@@ -6,10 +6,16 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from apis import serializers
 from apis.models import Event, EventRegistration,User
-from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer
+from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt import views as jwt_views
 
 
+#Custom JWT token to distinguish user type(normal or admin user)
+class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
+
+    serializer_class = CustomTokenObtainPairSerializer
+    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
 
 
 @api_view(['GET', 'POST'])
