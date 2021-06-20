@@ -20,7 +20,7 @@ from django.conf import  settings
 from django.conf.urls.static import static
 urlpatterns = [
     #user authentication
-    path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
     #event details
@@ -35,6 +35,7 @@ urlpatterns = [
     #user details
     path('users/',views.user_list),
     path('users/<int:id>/',views.user_details),
+    path('users/<int:id>/registered_events/',views.user_registered_events),
     
 ]
 urlpatterns = urlpatterns + static(settings.MEDIA_URL,document_root =settings.MEDIA_ROOT)
