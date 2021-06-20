@@ -108,7 +108,8 @@ class EventRegistration(models.Model):
 
 class Event(models.Model) :
     title = models.CharField(max_length=30)
-    datetime = models.DateTimeField()
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
     location = models.CharField(max_length=30)
     max_participants = models.IntegerField()
     short_description = models.CharField(max_length=150)
