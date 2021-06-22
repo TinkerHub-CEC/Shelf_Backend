@@ -140,10 +140,11 @@ def user_details(request, id, format=None):
         user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 @api_view(['POST'])
-@permission_classes((IsAuthenticated, ))
+#@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
     try:
-        reg_obj = EventRegistration.objects.get(user=request.user, event=id)
+        user_id = request.POST.get('user_id')
+        reg_obj = EventRegistration.objects.get(user=user_id, event=id)
     except EventRegistration.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
