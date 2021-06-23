@@ -9,14 +9,23 @@ from apis.models import Event, EventRegistration,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
+from django.conf import settings
+from django.core.mail import send_mail
 
 
-#Custom JWT token to distinguish user type(normal or admin user)
-class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
-
-    serializer_class = CustomTokenObtainPairSerializer
-    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
-
+@api_view(['GET', 'POST'])
+#@permission_classes((IsAuthenticated, ))
+def test(request, format=None):
+    """
+    List all events, or create a new event.
+    """
+    if request.method == 'GET':
+        subject = 'welcome to GFG world'
+        message = f'Hi , thank you for registering in geeksforgeeks.'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['razabinashraf@gmail.com' ]
+        send_mail( subject, message, email_from, recipient_list )
+        return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 #@permission_classes((IsAuthenticated, ))
@@ -92,6 +101,12 @@ def register_for_event(request, id, format=None):
 
     if request.method == 'POST':
         event_obj.registrations.add(request.user)
+
+        subject = f'You have registered for{event_obj.title}'
+        message = f'Hi , thank you for registering in {event_obj.title}.'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [request.user.email ]
+        send_mail( subject, message, email_from, recipient_list )
         return Response(status=status.HTTP_201_CREATED)
     if request.method == 'DELETE' :
         event_obj.registrations.remove(request.user)
@@ -192,3 +207,9 @@ def active_registrations(request,format=None):
         active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
         serializer = EventSerializer(active_registrations, many=True)
         return Response(serializer.data)
+
+#Custom JWT token to distinguish user type(normal or admin user)
+class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
+
+    serializer_class = CustomTokenObtainPairSerializer
+    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()

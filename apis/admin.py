@@ -9,7 +9,7 @@ class UserAdmin(UserAdmin):
     add_form = RegistrationForm
     form = CustomUserChangeForm
     model = User
-    list_display = ('email','username','date_joined','last_login','is_admin','is_staff','last_name','roll_no','semester','batch')
+    list_display = ('email','username','date_joined','last_login','is_admin','is_staff','first_name','last_name','roll_no','semester','batch')
     search_fields = ('email','username')
     readonly_fields = ('date_joined','last_login')
 
@@ -17,7 +17,7 @@ class UserAdmin(UserAdmin):
     filter_horizontal = ()
     list_filter = ()
     fieldsets = (
-        (None, {'fields': ('email', 'password','username','last_name',)}),
+        (None, {'fields': ('email', 'password','username','first_name','last_name',)}),
         ('Permissions', {'fields': ('is_staff', 'is_active','is_admin',)}),
     )
     add_fieldsets = (
