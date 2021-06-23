@@ -25,7 +25,7 @@ def event_list(request, format=None):
     List all events, or create a new event.
     """
     if request.method == 'GET':
-        events = Event.objects.order_by('-datetime')
+        events = Event.objects.order_by('-start_datetime')
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
 
@@ -192,5 +192,3 @@ def active_registrations(request,format=None):
         active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
         serializer = EventSerializer(active_registrations, many=True)
         return Response(serializer.data)
-
-
