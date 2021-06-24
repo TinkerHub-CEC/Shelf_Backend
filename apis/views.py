@@ -11,21 +11,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
 from django.conf import settings
 from django.core.mail import send_mail
+from django_email_verification import send_email as send_verification_mail
 
 
 @api_view(['GET', 'POST'])
 #@permission_classes((IsAuthenticated, ))
 def test(request, format=None):
-    """
-    List all events, or create a new event.
-    """
-    if request.method == 'GET':
-        subject = 'welcome to GFG world'
-        message = f'Hi , thank you for registering in geeksforgeeks.'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = ['razabinashraf@gmail.com' ]
-        send_mail( subject, message, email_from, recipient_list )
-        return Response(status=status.HTTP_200_OK)
+    #test new features here
+    return False
 
 @api_view(['GET', 'POST'])
 #@permission_classes((IsAuthenticated, ))
@@ -104,7 +97,7 @@ def register_for_event(request, id, format=None):
 
         subject = f'You have registered for{event_obj.title}'
         message = f'Hi , thank you for registering in {event_obj.title}.'
-        email_from = settings.EMAIL_HOST_USER
+        email_from = settings.EMAIL_FROM_ADDRESS
         recipient_list = [request.user.email ]
         send_mail( subject, message, email_from, recipient_list )
         return Response(status=status.HTTP_201_CREATED)
@@ -121,9 +114,12 @@ def user_list(request,format=None):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            instance = serializer.save()
-            instance.set_password(instance.password)
-            instance.save()
+            user_obj = serializer.save()
+            user_obj.set_password(user_obj.password)
+            user_obj.is_active = False
+            user_obj.save()
+            send_verification_mail(user_obj)
+            print('Verification email sent')
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
