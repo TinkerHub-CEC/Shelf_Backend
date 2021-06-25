@@ -136,21 +136,21 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'tinkerhubshelf@gmail.com'
-EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
+EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_PORT =  config('EMAIL_PORT', default=25, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD',default='')
 
 def verified_callback(user):
     user.is_active = True
 
 
 EMAIL_VERIFIED_CALLBACK = verified_callback
-EMAIL_FROM_ADDRESS = 'Shelf <tinkerhubshelf@gmail.com'
+EMAIL_FROM_ADDRESS = config('EMAIL_FROM_ADDRESS', default='')
 EMAIL_MAIL_SUBJECT = 'Confirm your email'
 EMAIL_MAIL_HTML = 'confirm_mail.html'
 EMAIL_MAIL_PLAIN = 'confirm_mail_plain.html'
 EMAIL_TOKEN_LIFE = 60 * 60
 EMAIL_PAGE_TEMPLATE = 'success.html'
-EMAIL_PAGE_DOMAIN = 'http://127.0.0.1:8000/'
+EMAIL_PAGE_DOMAIN = config('EMAIL_PAGE_DOMAIN',default='')
