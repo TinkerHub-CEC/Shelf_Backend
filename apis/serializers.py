@@ -34,7 +34,7 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ['id','title', 'start_datetime', 'end_datetime', 'location','max_participants', 'short_description', 'long_description', 'reg_open_date',
                     'reg_close_date', 'poster']
 
-class EventRegistrationSerializer(serializers.ModelSerializer):
+class EventRegistrationSerializer(DynamicFieldsModelSerializer):
     class Meta :
         model = EventRegistration
         fields = ['id','photosubmission','user','event','attendance']
