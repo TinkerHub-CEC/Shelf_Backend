@@ -150,20 +150,43 @@ def user_details(request, id, format=None):
     elif request.method == 'DELETE':
         user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-@api_view(['POST'])
+@api_view(['POST','GET'])
 #@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
-    try:
-        user_id = request.POST.get('user_id')
-        reg_obj = EventRegistration.objects.get(user=user_id, event=id)
-    except EventRegistration.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'GET':
+        try:
+            reg_objs = EventRegistration.objects.filter(event=id,attendance=False)
+        except EventRegistration.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+                #method1
+        display =list()
+        details = dict()
+        for obj in reg_objs:
+            if obj.photosubmission == '':
+                pass
+            else:
+                individual_user = User.objects.get(id=obj.user.id)
+                user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
+                eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
+                details['user_details']=user_serializer.data
+                details['url']=eventreg_serializer.data
+                display.append(details)
+        return Response(display)
+
+    if request.method == 'POST':
+        try:
+            user_id = request.POST.get('user_id')
+            reg_obj = EventRegistration.objects.get(user=user_id, event=id)
+        except EventRegistration.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['PUT'])
 @permission_classes((IsAuthenticated, ))
