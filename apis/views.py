@@ -118,7 +118,7 @@ def user_list(request,format=None):
             user_obj.set_password(user_obj.password)
             user_obj.is_active = False
             user_obj.save()
-            #send_verification_mail(user_obj)
+            send_verification_mail(user_obj)
             print('Verification email sent')
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -175,7 +175,7 @@ def mark_attendance(request,id):
                 display.append(details)
         return Response(display)
 
-    if request.methos == 'POST':
+    if request.method == 'POST':
         try:
             user_id = request.POST.get('user_id')
             reg_obj = EventRegistration.objects.get(user=user_id, event=id)
