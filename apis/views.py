@@ -252,6 +252,14 @@ def event_registrations_count(request, id, format=None):
     if request.method == 'GET':
         return Response({"count" : user_count})
 
+@api_view(['GET'])
+#@permission_classes((IsAuthenticated, ))
+def active_registrations(request,format=None):
+    if request.method == 'GET':
+        active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+        serializer = EventSerializer(active_registrations, many=True)
+        return Response(serializer.data)
+
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 

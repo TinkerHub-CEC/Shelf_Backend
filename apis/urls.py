@@ -25,13 +25,15 @@ urlpatterns = [
 
     #event details
     path('events/', views.event_list),
-    path('events/active_unregistered/',views.active_unregistered_events),
+    path('events/active/unregistered/',views.active_unregistered_events),
     path('events/<int:id>/', views.event_detail),
     path('events/<int:id>/registrations/', views.event_registrations),
     path('events/<int:id>/register/', views.register_for_event),
     path('events/<int:id>/attendance/', views.mark_attendance),
     path('events/<int:id>/uploadimage/',views.upload_photo),
     path('events/<int:id>/registrations_count/',views.event_registrations_count),
+    path('events/active/all/',views.active_registrations),
+
 
     #user details
     path('users/',views.user_list),
