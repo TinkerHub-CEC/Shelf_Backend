@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import partial
+from django.http.response import JsonResponse
 from rest_framework import fields, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -220,12 +221,36 @@ def user_registered_events(request, id, format=None):
         return Response(serializer.data,status=status.HTTP_302_FOUND)
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
-def active_registrations(request,format=None):
+@permission_classes((IsAuthenticated, ))
+def active_unregistered_events(request, format=None):
+
+    # Function that returns all active events that a user is not registered to.
+
     if request.method == 'GET':
+        user = User.objects.get(id=request.user.id)
+        user_registered_events = user.registered_events.all()
         active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
-        serializer = EventSerializer(active_registrations, many=True)
+        active_unregistered_events = active_registrations.difference(user_registered_events)
+        serializer = EventSerializer(active_unregistered_events, many=True)
         return Response(serializer.data)
+    else :
+        return Response("Scene ahnello")
+
+@api_view(['GET'])
+#@permission_classes((IsAuthenticated, ))
+def event_registrations_count(request, id, format=None):
+    """
+    Total number of users registered in a particular event, if event id is provided.
+    """
+    try:
+        event_obj = Event.objects.get(id=id)
+        registered_users = event_obj.registrations.all()
+        user_count = registered_users.count()
+    except Event.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        return Response({"count" : user_count})
 
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
