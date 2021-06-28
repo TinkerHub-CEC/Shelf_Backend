@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.base import Model
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from django.db.models.enums import Choices
 
 
 # Create your models here.
@@ -101,8 +102,9 @@ class User(AbstractBaseUser):
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
-    attendance = models.BooleanField(default=False)
-    photosubmission = models.ImageField(upload_to='pic',max_length = 200,)
+    attendance = models.IntegerField(default=0,choices=[(0,'0'),(1,'1'),(2,'2')])
+    #{ 0:"NotAssigned" , 1:"Accepted" , 2:"Rejected"}
+    photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
     class Meta:
         unique_together = (('user','event'),)
 
@@ -118,4 +120,6 @@ class Event(models.Model) :
     reg_open_date = models.DateTimeField()
     reg_close_date = models.DateTimeField()
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
+    attendance_mothod = models.IntegerField(default=0,choices=[(0,'0'),(1,'1'),(2,'2')])
+    #{ 0:"NullMethod" , 1:"DefaultBoxMethod" , 2:"UploadScreenshotMethod" }
 

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import CharField, ChoiceField
 from apis.models import User, Event, EventRegistration
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -34,7 +35,7 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ['id','title', 'start_datetime', 'end_datetime', 'location','max_participants', 'short_description', 'long_description', 'reg_open_date',
                     'reg_close_date', 'poster']
 
-class EventRegistrationSerializer(serializers.ModelSerializer):
+class EventRegistrationSerializer(DynamicFieldsModelSerializer):
     class Meta :
         model = EventRegistration
         fields = ['id','photosubmission','user','event','attendance']
@@ -48,5 +49,3 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['is_superuser'] = user.is_superuser
         return token
-
-    
