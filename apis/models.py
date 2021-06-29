@@ -100,15 +100,26 @@ class User(AbstractBaseUser):
         return True
         
 class EventRegistration(models.Model):
+
+    ATTENDANCE_ASSIGNMENT_CHOICES = (
+        (0,'0'), #Attendance Not Assigned
+        (1,'1'), #Attendance Accepted
+        (2,'2'), #Attendance Rejected
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
-    attendance = models.IntegerField(default=0,choices=[(0,'0'),(1,'1'),(2,'2')])
-    #{ 0:"NotAssigned" , 1:"Accepted" , 2:"Rejected"}
+    attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
     photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
     class Meta:
         unique_together = (('user','event'),)
 
 class Event(models.Model) :
+    ATTENDANCE_METHOD_CHOICES = (
+        (0,'0'), #Default method : Null method
+        (1,'1'), #CheckBox method
+        (2,'2'), #UploadScreenshots method
+    )
     title = models.CharField(max_length=30)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -120,6 +131,5 @@ class Event(models.Model) :
     reg_open_date = models.DateTimeField()
     reg_close_date = models.DateTimeField()
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
-    attendance_mothod = models.IntegerField(default=0,choices=[(0,'0'),(1,'1'),(2,'2')])
-    #{ 0:"NullMethod" , 1:"DefaultBoxMethod" , 2:"UploadScreenshotMethod" }
+    attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
 
