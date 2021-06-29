@@ -189,42 +189,6 @@ def mark_attendance(request,id):
             return Response({'dev_data': f'Event Registration with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
         
         display =list()
-        details = dict()
-        for obj in reg_objs:
-            if obj.photosubmission == '':
-                pass
-            else:
-                individual_user = User.objects.get(id=obj.user.id)
-                user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
-                eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
-                details['user_details']=user_serializer.data
-                details['url']=eventreg_serializer.data
-                display.append(details)
-        return Response(display)
-
-    if request.method == 'POST':
-        try:
-            user_id = request.POST.get('user_id')
-            reg_obj = EventRegistration.objects.get(user=user_id, event=id)
-        except EventRegistration.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST' , 'GET'])
-#@permission_classes((IsAuthenticated, ))
-def mark_attendance(request,id):
-    if request.method == 'GET':
-        try:
-            reg_objs = EventRegistration.objects.filter(event=id,attendance=False)
-        except EventRegistration.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        display =list()
         for obj in reg_objs:
             if obj.photosubmission == '':
                 pass
@@ -237,7 +201,7 @@ def mark_attendance(request,id):
                 details['url']=eventreg_serializer.data
                 display.append(details)
         return Response(display)
-        
+
     if request.method == 'POST':
         try:
             user_id = request.POST.get('user_id')
