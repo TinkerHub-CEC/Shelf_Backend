@@ -225,11 +225,11 @@ def mark_attendance(request,id):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
         display =list()
+        details = dict()
         for obj in reg_objs:
             if obj.photosubmission == '':
                 pass
             else:
-                details = dict()
                 individual_user = User.objects.get(id=obj.user.id)
                 user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
                 eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
