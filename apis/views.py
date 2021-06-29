@@ -229,7 +229,6 @@ def mark_attendance(request,id):
             if obj.photosubmission == '':
                 pass
             else:
-                #testing
                 details = dict()
                 individual_user = User.objects.get(id=obj.user.id)
                 user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
