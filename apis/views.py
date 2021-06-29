@@ -148,7 +148,6 @@ def mark_attendance(request,id):
         except EventRegistration.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-                #method1
         display =list()
         for obj in reg_objs:
             if obj.photosubmission == '':
@@ -156,7 +155,7 @@ def mark_attendance(request,id):
             else:
                 details = dict()
                 individual_user = User.objects.get(id=obj.user.id)
-                user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch','email'))
+                user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
                 eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
                 details['user_details']=user_serializer.data
                 details['url']=eventreg_serializer.data
