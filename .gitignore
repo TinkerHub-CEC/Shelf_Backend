@@ -1,6 +1,7 @@
 .vscode/
 apis/__pycache__/
-apis/migrations/__pycache__/
+apis/migrations/
 Shelf_Backend/__pycache__/
 media/
 .env
+db.sqlite3
