@@ -27,17 +27,21 @@ def event_list(request, format=None):
     """
     List all events, or create a new event.
     """
-    if request.method == 'GET':
-        events = Event.objects.order_by('-start_datetime')
-        serializer = EventSerializer(events, many=True)
-        return Response(serializer.data)
+    try:
+        if request.method == 'GET':
+            events = Event.objects.order_by('-start_datetime')
+            serializer = EventSerializer(events, many=True)
+            return Response(serializer.data)
 
-    elif request.method == 'POST':
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'POST':
+            serializer = EventSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 #@permission_classes((IsAuthenticated, ))
@@ -45,42 +49,50 @@ def event_detail(request, id, format=None):
     """
     Retrieve, update or delete a event
     """
-    try:
-        event_obj = Event.objects.get(id=id)
-    except Event.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = EventSerializer(event_obj)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = EventSerializer(event_obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
+    try: 
+        try:
+            event_obj = Event.objects.get(id=id)
+        except Event.DoesNotExist:
+            return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
+    
+        if request.method == 'GET':
+            serializer = EventSerializer(event_obj)
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        event_obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+        elif request.method == 'PUT':
+            serializer = EventSerializer(event_obj, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+        elif request.method == 'DELETE':
+            event_obj.delete()
+            return Response({'dev_data': 'Event deleted succesfully!',},status=status.HTTP_204_NO_CONTENT) 
+        
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
 #@permission_classes((IsAuthenticated, ))
-def event_registrations(request, id, format=None):
+def registered_users(request, id, format=None):
     """
     View registered users of a particular event, if event id is provided
     """
-    try:
-        event_obj = Event.objects.get(id=id)
-        registered_users = event_obj.registrations.all()
-    except Event.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
-        return Response(serializer.data)
+    try: 
+        try:
+            event_obj = Event.objects.get(id=id)
+            registered_users = event_obj.registrations.all()
+        except Event.DoesNotExist:
+            return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
+    
+        if request.method == 'GET':
+            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
+            return Response(serializer.data) 
+        
+    except Exception as e:
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST', 'DELETE'])
 @permission_classes((IsAuthenticated, ))
@@ -88,23 +100,29 @@ def register_for_event(request, id, format=None):
     """
     Create a new registration for an event or delete an existing registration
     """
-    try:
-        event_obj = Event.objects.get(id=id)
-    except Event.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'POST':
-        event_obj.registrations.add(request.user)
-
-        subject = f'You have registered for{event_obj.title}'
-        message = f'Hi , thank you for registering in {event_obj.title}.'
-        email_from = settings.EMAIL_FROM_ADDRESS
-        recipient_list = [request.user.email ]
-        send_mail( subject, message, email_from, recipient_list )
-        return Response(status=status.HTTP_201_CREATED)
-    if request.method == 'DELETE' :
-        event_obj.registrations.remove(request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    try: 
+        try:
+            event_obj = Event.objects.get(id=id)
+        except Event.DoesNotExist:
+            return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
+    
+        if request.method == 'POST':
+            event_obj.registrations.add(request.user)
+    
+            subject = f'You have registered for{event_obj.title}'
+            message = f'Hi , thank you for registering in {event_obj.title}.'
+            email_from = settings.EMAIL_FROM_ADDRESS
+            recipient_list = [request.user.email ]
+            send_mail( subject, message, email_from, recipient_list )
+            return Response(status=status.HTTP_201_CREATED)
+        
+        #TODo: check user is already registered or not before deleting 
+        if request.method == 'DELETE' :
+            event_obj.registrations.remove(request.user)
+            return Response(status=status.HTTP_204_NO_CONTENT) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'POST' ])
 def user_list(request,format=None):
@@ -112,45 +130,54 @@ def user_list(request,format=None):
     Create new User object.
     """
     #Create new User object
-    if request.method == 'POST':
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user_obj = serializer.save()
-            user_obj.set_password(user_obj.password)
-            user_obj.is_active = False
-            user_obj.save()
-            send_verification_mail(user_obj)
-            print('Verification email sent')
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    try: 
+        if request.method == 'POST':
+            serializer = UserSerializer(data=request.data)
+            if serializer.is_valid():
+                user_obj = serializer.save()
+                user_obj.set_password(user_obj.password)
+                user_obj.is_active = False
+                user_obj.save()
+                send_verification_mail(user_obj)
+                print('Verification email sent')
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_details(request, id, format=None):
     """
     Retrieve, delete, update a single users' details
     """
-    try:
-        user_obj = User.objects.get(id=id)
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    #Get details of a single user
-    if request.method == 'GET':
-        serializer = UserSerializer(user_obj)
-        return Response(serializer.data)
-
-    #Update details of a single user
-    elif request.method == 'PUT':
-        serializer = UserSerializer(user_obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
+    try: 
+        try:
+            user_obj = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'dev_data': f'User with id={id} does not exist!', 'app_data': 'User not found!'},status=status.HTTP_404_NOT_FOUND)
+    
+        #Get details of a single user
+        if request.method == 'GET':
+            serializer = UserSerializer(user_obj)
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    #Delete details of a single user
-    elif request.method == 'DELETE':
-        user_obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+        #Update details of a single user
+        elif request.method == 'PUT':
+            serializer = UserSerializer(user_obj, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+        #Delete details of a single user
+        elif request.method == 'DELETE':
+            user_obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['POST','GET'])
 #@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
@@ -159,9 +186,8 @@ def mark_attendance(request,id):
         try:
             reg_objs = EventRegistration.objects.filter(event=id,attendance=False)
         except EventRegistration.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'dev_data': f'Event Registration with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
         
-                #method1
         display =list()
         details = dict()
         for obj in reg_objs:
@@ -194,15 +220,19 @@ def mark_attendance(request,id):
 def upload_photo(request,id,format=None):
 
     try:
-        instance = EventRegistration.objects.get(event = id,user = request.user)
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        try:
+            instance = EventRegistration.objects.get(event=id, user=request.user)
+        except:
+            return Response({'dev_data': f'No active registration found for event_id={id} with current logged in user!', 'app_data': 'Not registered in event!'},status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = EventRegistrationSerializer(instance,data = request.data,partial = True)   
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
     
-    serializer = EventRegistrationSerializer(instance,data = request.data,partial = True)   
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'GET' ])
 #@permission_classes((IsAuthenticated, ))
@@ -210,15 +240,19 @@ def user_registered_events(request, id, format=None):
     """
     Function that returns all the events that a user is registered to.
     """
-    try:
-        user = User.objects.get(id=id)
-        registered_events = user.registered_events.all()
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    try: 
+        try:
+            user = User.objects.get(id=id)
+            registered_events = user.registered_events.all()
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        if request.method == 'GET':
+            serializer = EventSerializer(registered_events, many=True)
+            return Response(serializer.data,status=status.HTTP_302_FOUND) 
     
-    if request.method == 'GET':
-        serializer = EventSerializer(registered_events, many=True)
-        return Response(serializer.data,status=status.HTTP_302_FOUND)
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
@@ -226,15 +260,19 @@ def active_unregistered_events(request, format=None):
 
     # Function that returns all active events that a user is not registered to.
 
-    if request.method == 'GET':
-        user = User.objects.get(id=request.user.id)
-        user_registered_events = user.registered_events.all()
-        active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
-        active_unregistered_events = active_registrations.difference(user_registered_events)
-        serializer = EventSerializer(active_unregistered_events, many=True)
-        return Response(serializer.data)
-    else :
-        return Response("Scene ahnello")
+    try: 
+        if request.method == 'GET':
+            user = User.objects.get(id=request.user.id)
+            user_registered_events = user.registered_events.all()
+            active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            active_unregistered_events = active_registrations.difference(user_registered_events)
+            serializer = EventSerializer(active_unregistered_events, many=True)
+            return Response(serializer.data)
+        else :
+            return Response("Scene ahnello") 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 #@permission_classes((IsAuthenticated, ))
@@ -242,23 +280,31 @@ def event_registrations_count(request, id, format=None):
     """
     Total number of users registered in a particular event, if event id is provided.
     """
-    try:
-        event_obj = Event.objects.get(id=id)
-        registered_users = event_obj.registrations.all()
-        user_count = registered_users.count()
-    except Event.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        return Response({"count" : user_count})
+    try: 
+        try:
+            event_obj = Event.objects.get(id=id)
+            registered_users = event_obj.registrations.all()
+            user_count = registered_users.count()
+        except Event.DoesNotExist:
+            return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event doesnot exist!'},status=status.HTTP_404_NOT_FOUND)
+    
+        if request.method == 'GET':
+            return Response({"count" : user_count}) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 #@permission_classes((IsAuthenticated, ))
 def active_registrations(request,format=None):
-    if request.method == 'GET':
-        active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
-        serializer = EventSerializer(active_registrations, many=True)
-        return Response(serializer.data)
+    try: 
+        if request.method == 'GET':
+            active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            serializer = EventSerializer(active_registrations, many=True)
+            return Response(serializer.data) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
