@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import CharField, ChoiceField
 from apis.models import User, Event, EventRegistration
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -48,5 +49,3 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['is_superuser'] = user.is_superuser
         return token
-
-    

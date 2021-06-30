@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.base import Model
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from django.db.models.enums import Choices
 
 
 # Create your models here.
@@ -99,14 +100,26 @@ class User(AbstractBaseUser):
         return True
         
 class EventRegistration(models.Model):
+
+    ATTENDANCE_ASSIGNMENT_CHOICES = (
+        (0,'0'), #Attendance Not Assigned
+        (1,'1'), #Attendance Accepted
+        (2,'2'), #Attendance Rejected
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey('Event', on_delete= models.CASCADE)
-    attendance = models.BooleanField(default=False)
-    photosubmission = models.ImageField(upload_to='pic',max_length = 200,)
+    attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
+    photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
     class Meta:
         unique_together = (('user','event'),)
 
 class Event(models.Model) :
+    ATTENDANCE_METHOD_CHOICES = (
+        (0,'0'), #Default method : Null method
+        (1,'1'), #CheckBox method
+        (2,'2'), #UploadScreenshots method
+    )
     title = models.CharField(max_length=30)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -118,4 +131,5 @@ class Event(models.Model) :
     reg_open_date = models.DateTimeField()
     reg_close_date = models.DateTimeField()
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
+    attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
 

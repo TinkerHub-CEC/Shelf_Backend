@@ -189,11 +189,11 @@ def mark_attendance(request,id):
             return Response({'dev_data': f'Event Registration with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
         
         display =list()
-        details = dict()
         for obj in reg_objs:
             if obj.photosubmission == '':
                 pass
             else:
+                details = dict()
                 individual_user = User.objects.get(id=obj.user.id)
                 user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
                 eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
@@ -214,7 +214,7 @@ def mark_attendance(request,id):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 @api_view(['PUT'])
 @permission_classes((IsAuthenticated, ))
 def upload_photo(request,id,format=None):
