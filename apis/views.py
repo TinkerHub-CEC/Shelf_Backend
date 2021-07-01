@@ -197,8 +197,8 @@ def mark_attendance(request,id):
                 individual_user = User.objects.get(id=obj.user.id)
                 user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
                 eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
-                details['user_details']=user_serializer.data
-                details['url']=eventreg_serializer.data
+                details = user_serializer.data
+                details.update(eventreg_serializer.data)
                 display.append(details)
         return Response(display)
 
