@@ -102,9 +102,9 @@ class User(AbstractBaseUser):
 class EventRegistration(models.Model):
 
     ATTENDANCE_ASSIGNMENT_CHOICES = (
-        (0,'0'), #Attendance Not Assigned
-        (1,'1'), #Attendance Accepted
-        (2,'2'), #Attendance Rejected
+        (0,'Not Assigned'), #Attendance Not Assigned
+        (1,'Accepted'), #Attendance Accepted
+        (2,'Rejected'), #Attendance Rejected
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -116,9 +116,9 @@ class EventRegistration(models.Model):
 
 class Event(models.Model) :
     ATTENDANCE_METHOD_CHOICES = (
-        (0,'0'), #Default method : Null method
-        (1,'1'), #CheckBox method
-        (2,'2'), #UploadScreenshots method
+        (0,'None'), #Default method : Null method
+        (1,'CheckBox'), #CheckBox method
+        (2,'Upload proof'), #UploadScreenshots method
     )
     title = models.CharField(max_length=30)
     start_datetime = models.DateTimeField()

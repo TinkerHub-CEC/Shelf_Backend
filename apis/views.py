@@ -184,7 +184,7 @@ def mark_attendance(request,id):
 
     if request.method == 'GET':
         try:
-            reg_objs = EventRegistration.objects.filter(event=id,attendance=False)
+            reg_objs = EventRegistration.objects.filter(event=id,attendance=0)
         except EventRegistration.DoesNotExist:
             return Response({'dev_data': f'Event Registration with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
         
@@ -196,7 +196,7 @@ def mark_attendance(request,id):
                 details = dict()
                 individual_user = User.objects.get(id=obj.user.id)
                 user_serializer = UserSerializer(individual_user, read_only=True,fields=('id','first_name','last_name','semester','batch'))
-                eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission'))
+                eventreg_serializer = EventRegistrationSerializer(obj,read_only=True,fields=('user','photosubmission','attendance'))
                 details = user_serializer.data
                 details.update(eventreg_serializer.data)
                 display.append(details)
