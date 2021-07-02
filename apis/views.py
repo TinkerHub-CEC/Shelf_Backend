@@ -13,6 +13,7 @@ from rest_framework_simplejwt import views as jwt_views
 from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
+from services.google_calender import calender_services as calender
 
 
 @api_view(['GET', 'POST'])
@@ -36,7 +37,9 @@ def event_list(request, format=None):
         elif request.method == 'POST':
             serializer = EventSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                event_obj = serializer.save()
+                calender_event_id = calender.create_event(event_obj)
+                serializer.save(calender_event_id=calender_event_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
@@ -109,11 +112,15 @@ def register_for_event(request, id, format=None):
         if request.method == 'POST':
             event_obj.registrations.add(request.user)
     
-            subject = f'You have registered for{event_obj.title}'
-            message = f'Hi , thank you for registering in {event_obj.title}.'
-            email_from = settings.EMAIL_FROM_ADDRESS
-            recipient_list = [request.user.email ]
-            send_mail( subject, message, email_from, recipient_list )
+            # subject = f'You have registered for{event_obj.title}'
+            # message = f'Hi , thank you for registering in {event_obj.title}.'
+            # email_from = settings.EMAIL_FROM_ADDRESS
+            # recipient_list = [request.user.email ]
+            # send_mail(subject, message, email_from, recipient_list)
+            
+            user_email = { 'email': f'{request.user.email}' }
+            calender.update_event(event_obj,user_email)
+            
             return Response(status=status.HTTP_201_CREATED)
         
         #TODo: check user is already registered or not before deleting 

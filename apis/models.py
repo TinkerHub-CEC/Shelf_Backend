@@ -132,4 +132,5 @@ class Event(models.Model) :
     reg_close_date = models.DateTimeField()
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
     attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
+    calender_event_id = models.CharField(max_length=100)
 
