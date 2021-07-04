@@ -51,6 +51,7 @@ def create_event(event_obj):
         'timeZone': 'America/Los_Angeles',
     },
     'attendees': [
+        {'email': 'tinkerhubshelf@gmail.com'},
     ],
     'reminders': {
         'useDefault': False,
