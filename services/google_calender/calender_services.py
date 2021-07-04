@@ -51,7 +51,7 @@ def create_event(event_obj):
         'timeZone': 'America/Los_Angeles',
     },
     'attendees': [
-        {'email': 'raza.centrric@gmail.com'},
+        {'email': 'tinkerhubshelf@gmail.com'},
     ],
     'reminders': {
         'useDefault': False,
