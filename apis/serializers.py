@@ -33,7 +33,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ['id','title', 'start_datetime', 'end_datetime', 'location','max_participants', 'short_description', 'long_description', 'reg_open_date',
-                    'reg_close_date', 'poster']
+                    'reg_close_date', 'poster', 'attendance_method']
 
 class EventRegistrationSerializer(DynamicFieldsModelSerializer):
     class Meta :
