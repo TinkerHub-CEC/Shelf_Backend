@@ -39,11 +39,12 @@ def event_list(request, format=None):
             if serializer.is_valid():
                 event_obj = serializer.save()
                 calender_event_id = calender.create_event(event_obj)
-                serializer.save(calender_event_id=calender_event_id)
+                event_obj.calender_event_id = calender_event_id
+                event_obj.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_404_NOT_FOUND)
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
