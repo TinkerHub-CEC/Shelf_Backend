@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_email_verification',
     'easyaudit',
+    'django_crontab',
 
     #default django apps
     'django.contrib.admin',
@@ -128,6 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CRONJOBS = [
+    ('* 8 * * *', 'apis.cron.notassignedtoabsent')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
