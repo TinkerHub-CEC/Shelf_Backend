@@ -44,7 +44,7 @@ urlpatterns = [
 
 
     #testing out new features
-    path('test/',),
+    path('test/',views.test),
     
 ]
 urlpatterns = urlpatterns + static(settings.MEDIA_URL,document_root =settings.MEDIA_ROOT)
