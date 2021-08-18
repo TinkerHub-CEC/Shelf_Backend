@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_email_verification',
     'django_crontab',
+    'easyaudit',
 
     #default django apps
     'django.contrib.admin',
@@ -45,6 +46,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    #Third party
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'Shelf_Backend.urls'

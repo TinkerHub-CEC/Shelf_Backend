@@ -26,6 +26,7 @@ urlpatterns = [
 
     #event details
     path('events/', views.event_list),
+    path('events/active/all/',views.active_registrations),
     path('events/active/unregistered/',views.active_unregistered_events),
     path('events/<int:id>/', views.event_detail),
     path('events/<int:id>/registrations/', views.registered_users),
