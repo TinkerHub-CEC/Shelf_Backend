@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime 
 from functools import partial
 from django.http.response import JsonResponse
 from rest_framework import fields, status
@@ -14,6 +14,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
+from datetime import timedelta
+
 
 
 @api_view(['GET', 'POST'])
@@ -319,3 +321,23 @@ class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 
     serializer_class = CustomTokenObtainPairSerializer
     token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
+            
+
+
+
+       
+       
+    
+
+
+        
+        
+       
+    
+
+
+    
+
+
+
+

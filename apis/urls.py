@@ -40,8 +40,11 @@ urlpatterns = [
     path('users/<int:id>/',views.user_details),
     path('users/<int:id>/registered_events/',views.user_registered_events),
 
+
+
+
     #testing out new features
-    path('test/', views.test),
+    path('test/',),
     
 ]
 urlpatterns = urlpatterns + static(settings.MEDIA_URL,document_root =settings.MEDIA_ROOT)
