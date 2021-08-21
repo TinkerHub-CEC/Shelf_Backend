@@ -316,6 +316,11 @@ def active_registrations(request,format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+#Respond with 200 ok when pinged
+@api_view(['GET'])
+def ping(request) :
+    return Response(status=status.HTTP_200_OK)
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 

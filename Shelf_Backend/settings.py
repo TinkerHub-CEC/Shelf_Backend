@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from datetime import timedelta
+from datetime import timedelta,datetime
 from decouple import config, Csv
 
 
@@ -112,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('* 8 * * *', 'apis.cron.notassignedtoabsent')
+    ('* 8 * * *', 'cron.notassignedtoabsent')
 ]
 
 # Internationalization
@@ -182,3 +182,10 @@ DEFAULT_FILE_STORAGE = 'Shelf_Backend.storage_backends.PublicMediaStorage'
 
 AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
 PRIVATE_FILE_STORAGE = 'Shelf_Backend.storage_backends.PrivateMediaStorage'
+DBBACKUP_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DBBACKUP_FILENAME_TEMPLATE = datetime.now().strftime("Backup on %d-%m-%Y.psql")
+DBBACKUP_STORAGE_OPTIONS = {
+    "access_key": config('AWS_ACCESS_KEY_ID'),
+    "secret_key": config('AWS_SECRET_ACCESS_KEY'),
+    "bucket_name": 'shelfimages'
+}
