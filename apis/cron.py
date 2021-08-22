@@ -1,6 +1,5 @@
 from apis.models import Event, EventRegistration,User
 import datetime 
-from datetime import timedelta
 
 
 def notassignedtoabsent(self):
