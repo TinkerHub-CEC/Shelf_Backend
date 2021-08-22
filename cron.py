@@ -88,6 +88,3 @@ def ping_webserver():
                         </html>
                         """
         mail.send_mail(message_text, message_html)
-ping_webserver()
-ping_database()
-# backup()
