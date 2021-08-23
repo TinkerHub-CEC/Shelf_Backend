@@ -1,9 +1,5 @@
 from apis.models import Event, EventRegistration,User
 import datetime 
-from datetime import timedelta
-from django.core.mail import send_mail
-from decouple import config
-
 
 
 def notassignedtoabsent(self):
@@ -28,63 +24,3 @@ def notassignedtoabsent(self):
                     a.save()
                 else:
                     print('NO')  
-
-from datetime import datetime
-import os
-import django
-from django.conf import settings
-from django.core.management import call_command
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Shelf_Backend.settings")
-django.setup()
-import subprocess  # For executing a shell command
-from services import mail
-import requests
-
-def backup():
-    filename = datetime.now().strftime("Backup on %d-%m-%Y.psql")
-    try:
-        call_command("dbbackup")
-        print( f"Backed up successfully: {datetime.now()}")
-    except:
-        print( f"Could not be backed up: {datetime.now()}")
-
-def ping_database():
-    db_name = config('DB_NAME')
-    command = ['pg_isready', f'-d {db_name}']
-    if subprocess.call(command) == 1 :
-        pass
-    else:
-        message_text = "Database server is down!!!"
-        message_html = """\
-                        <html>
-                        <head></head>
-                        <body>
-                        <h1>Hello!</h1>
-                        <p>Shelf Database server is down.</p>
-                        </body>
-                        </html>
-                        """
-        send_mail(message_text, message_html)
-        subject = 'Database server is down!!!'
-        message = 'Hi , Database server for shelf is down.'
-        email_from = settings.EMAIL_FROM_ADDRESS
-        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com']
-        send_mail(subject, message, email_from, recipient_list)
-
-def ping_webserver():
-    try :
-        response = requests.get('http://127.0.0.1:8000/ping/')
-        print(response.status_code)
-    except :
-        print('Server down')
-        message_text = "Web Server is down!!!"
-        message_html = """\
-                        <html>
-                        <head></head>
-                        <body>
-                        <h1>Hello!</h1>
-                        <p>Shelf Web server is down.</p>
-                        </body>
-                        </html>
-                        """
-        mail.send_mail(message_text, message_html)
