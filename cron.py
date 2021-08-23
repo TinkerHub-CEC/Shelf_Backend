@@ -68,12 +68,12 @@ def ping_database():
         subject = 'Database server is down!!!'
         message = 'Hi , Database server for shelf is down.'
         email_from = settings.EMAIL_FROM_ADDRESS
-        recipient_list = ['raza.centrric@gmail.com']
+        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com']
         send_mail(subject, message, email_from, recipient_list)
 
 def ping_webserver():
     try :
-        response = requests.get('http://127.0.0.1:8000/ping')
+        response = requests.get('http://127.0.0.1:8000/ping/')
         print(response.status_code)
     except :
         print('Server down')
