@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime 
 from functools import partial
 from django.http.response import JsonResponse
 from rest_framework import fields, status
@@ -14,6 +14,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
+from datetime import datetime
+
 
 
 @api_view(['GET', 'POST'])
@@ -44,7 +46,7 @@ def event_list(request, format=None):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP)
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -92,7 +94,7 @@ def registered_users(request, id, format=None):
             return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
     
         if request.method == 'GET':
-            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
+            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email', 'semester', 'batch'))
             return Response(serializer.data) 
         
     except Exception as e:
@@ -319,3 +321,23 @@ class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 
     serializer_class = CustomTokenObtainPairSerializer
     token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
+            
+
+
+
+       
+       
+    
+
+
+        
+        
+       
+    
+
+
+    
+
+
+
+

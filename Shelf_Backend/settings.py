@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     #third party apps
     'rest_framework',
     'django_email_verification',
+    'easyaudit',
+    'django_crontab',
 
     #default django apps
     'django.contrib.admin',
@@ -44,6 +46,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    #Third party
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'Shelf_Backend.urls'
@@ -123,6 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CRONJOBS = [
+    ('* 8 * * *', 'cron.notassignedtoabsent')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

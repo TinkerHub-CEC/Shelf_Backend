@@ -107,8 +107,8 @@ class EventRegistration(models.Model):
         (2,'Rejected'), #Attendance Rejected
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey('Event', on_delete= models.CASCADE)
+    user = models.ForeignKey('User', related_name='evre',on_delete=models.CASCADE)
+    event = models.ForeignKey('Event',related_name='evre',on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
     photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
     class Meta:
@@ -133,4 +133,3 @@ class Event(models.Model) :
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
     attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
     calender_event_id = models.CharField(max_length=100)
-
