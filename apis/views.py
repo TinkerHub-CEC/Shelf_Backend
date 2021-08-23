@@ -212,8 +212,8 @@ def mark_attendance(request,id):
 
     if request.method == 'POST':
         try:
-            user_id = request.POST.get('user_id')
-            reg_obj = EventRegistration.objects.get(user=user_id, event=id)
+            user = request.POST.get('user')
+            reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
