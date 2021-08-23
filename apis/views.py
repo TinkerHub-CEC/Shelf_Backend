@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
-from datetime import timedelta
+from datetime import datetime
 
 
 
