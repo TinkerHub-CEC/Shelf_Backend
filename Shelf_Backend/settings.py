@@ -113,7 +113,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('* 8 * * *', 'cron.notassignedtoabsent')
+    ('* 8 * * *', 'cron.notassignedtoabsent'),
+    ('* * */7 * *', 'cron.backup'),
+    ('*/1 * * * *', 'cron.ping_webserver'),
+    ('*/1 * * * *', 'cron.ping_database'),
 ]
 
 # Internationalization
