@@ -188,7 +188,7 @@ def user_details(request, id, format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(['POST','GET'])
+@api_view(['PUT','GET'])
 #@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
 
@@ -212,12 +212,12 @@ def mark_attendance(request,id):
                 display.append(details)
         return Response(display)
 
-    if request.method == 'POST':
+    if request.method == 'PUT':
         try:
-            user_id = request.POST.get('user_id')
-            reg_obj = EventRegistration.objects.get(user=user_id, event=id)
+            user = request.POST.get('user')
+            reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'dev_data': f'Event Registration object with given parameters not found!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
         if serializer.is_valid():
