@@ -16,6 +16,7 @@ Including another URLconf
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 from . import views
+from . import test
 from django.conf import  settings
 from django.conf.urls.static import static
 urlpatterns = [
@@ -33,6 +34,9 @@ urlpatterns = [
     path('events/<int:id>/attendance/', views.mark_attendance),
     path('events/<int:id>/uploadimage/',views.upload_photo), 
     path('events/<int:id>/registrations_count/',views.event_registrations_count),
+    path('events/active/all/',views.active_registrations),
+    path('events/<int:id>/checkregisteration/',views.registeration_check),
+    
 
 
     #user details

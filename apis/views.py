@@ -328,13 +328,17 @@ class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
     token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
             
 
-
-
-       
-       
-    
-
-
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def registeration_check(request,id):
+    try:
+        try:
+            instance = EventRegistration.objects.get(event=id, user=request.user)
+            return Response(True)
+        except:
+            return Response(False)
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
        
