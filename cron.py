@@ -49,22 +49,22 @@ def backup():
 def ping_database():
     db_name = config('DB_NAME')
     command = ['pg_isready', f'-d {db_name}']
-    if subprocess.call(command) == 1 :
+    if subprocess.call(command) == 0 :
         pass
     else:
         subject = 'Database server is down!!!'
         message = 'Hi , Database server for shelf is down.'
         email_from = settings.EMAIL_FROM_ADDRESS
-        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com']
+        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com', 'faizsaleem10@gmail.com']
         send_mail(subject, message, email_from, recipient_list)
 
 def ping_webserver():
     try :
-        response = requests.get('http://127.0.0.1:8000/ping/')
+        response = requests.get('http://127.0.0.1/ping/')
         print(response.status_code)
     except :
         subject = 'Shelf Web server is down!!!'
         message = 'Hi , Webserver for shelf is down.'
         email_from = settings.EMAIL_FROM_ADDRESS
-        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com']
+        recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com', 'faizsaleem10@gmail.com']
         send_mail(subject, message, email_from, recipient_list)
