@@ -109,8 +109,8 @@ class EventRegistration(models.Model):
         (2,'Rejected'), #Attendance Rejected
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey('Event', on_delete= models.CASCADE)
+    user = models.ForeignKey('User', related_name='evre',on_delete=models.CASCADE)
+    event = models.ForeignKey('Event',related_name='evre',on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
     photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
     def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
