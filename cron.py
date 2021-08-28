@@ -57,6 +57,7 @@ def ping_database():
         email_from = settings.EMAIL_FROM_ADDRESS
         recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com', 'faizsaleem10@gmail.com']
         send_mail(subject, message, email_from, recipient_list)
+        call_command('crontab remove')
 
 def ping_webserver():
     try :
@@ -68,3 +69,4 @@ def ping_webserver():
         email_from = settings.EMAIL_FROM_ADDRESS
         recipient_list = ['raza.centrric@gmail.com', 'farhanfaizalmannighayil@gmail.com', 'jeffingbenny@gmail.com', 'faizsaleem10@gmail.com']
         send_mail(subject, message, email_from, recipient_list)
+        call_command('crontab remove')
