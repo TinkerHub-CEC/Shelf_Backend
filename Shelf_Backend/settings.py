@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'storages',
     'easyaudit',
     'django_crontab',
-    'easyaudit',
 
     #default django apps
     'django.contrib.admin',
