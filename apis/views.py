@@ -94,7 +94,7 @@ def registered_users(request, id, format=None):
             return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
     
         if request.method == 'GET':
-            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email'))
+            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'last_name', 'semester', 'batch', 'email'))
             return Response(serializer.data) 
         
     except Exception as e:
