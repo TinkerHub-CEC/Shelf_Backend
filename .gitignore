@@ -7,3 +7,4 @@ media/
 .env
 credentials.json
 token.json
+static/
