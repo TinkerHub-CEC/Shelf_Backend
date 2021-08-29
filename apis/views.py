@@ -25,7 +25,7 @@ def test(request, format=None):
     return False
 
 @api_view(['GET', 'POST'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_list(request, format=None):
     """
     List all events, or create a new event.
@@ -50,7 +50,7 @@ def event_list(request, format=None):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_detail(request, id, format=None):
     """
     Retrieve, update or delete a event
@@ -81,7 +81,7 @@ def event_detail(request, id, format=None):
 
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def registered_users(request, id, format=None):
     """
     View registered users of a particular event, if event id is provided
@@ -135,6 +135,7 @@ def register_for_event(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'POST' ])
+@permission_classes((IsAuthenticated, ))
 def user_list(request,format=None):
     """
     Create new User object.
@@ -157,6 +158,7 @@ def user_list(request,format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
 def user_details(request, id, format=None):
     """
     Retrieve, delete, update a single users' details
@@ -189,7 +191,7 @@ def user_details(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['PUT','GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
 
     if request.method == 'GET':
@@ -245,7 +247,7 @@ def upload_photo(request,id,format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'GET' ])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def user_registered_events(request, id, format=None):
     """
     Function that returns all the events that a user is registered to.
@@ -285,7 +287,7 @@ def active_unregistered_events(request, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_registrations_count(request, id, format=None):
     """
     Total number of users registered in a particular event, if event id is provided.
@@ -305,7 +307,7 @@ def event_registrations_count(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def active_registrations(request,format=None):
     try: 
         if request.method == 'GET':

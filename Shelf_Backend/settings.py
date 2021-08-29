@@ -11,13 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG',default=True, cast=bool)
-
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+HOST_IP = config('HOST_IP')
 
 INSTALLED_APPS = [
     
@@ -30,6 +27,7 @@ INSTALLED_APPS = [
     'storages',
     'easyaudit',
     'django_crontab',
+    'easyaudit',
 
     #default django apps
     'django.contrib.admin',
@@ -38,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms'
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -165,7 +164,7 @@ EMAIL_MAIL_HTML = 'confirm_mail.html'
 EMAIL_MAIL_PLAIN = 'confirm_mail_plain.html'
 EMAIL_TOKEN_LIFE = 60 * 60
 EMAIL_PAGE_TEMPLATE = 'success.html'
-EMAIL_PAGE_DOMAIN = config('EMAIL_PAGE_DOMAIN',default='')
+EMAIL_PAGE_DOMAIN = config('HOST_IP',default='')
 
 
 
