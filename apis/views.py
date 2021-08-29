@@ -332,7 +332,7 @@ class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
-def registeration_check(request,id):
+def registration_check(request,id):
     try:
         try:
             instance = EventRegistration.objects.get(event=id, user=request.user)

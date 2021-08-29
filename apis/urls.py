@@ -35,7 +35,7 @@ urlpatterns = [
     path('events/<int:id>/uploadimage/',views.upload_photo), 
     path('events/<int:id>/registrations_count/',views.event_registrations_count),
     path('events/active/all/',views.active_registrations),
-    path('events/<int:id>/checkregisteration/',views.registeration_check),
+    path('events/<int:id>/checkregistration/',views.registration_check),
     
 
 
