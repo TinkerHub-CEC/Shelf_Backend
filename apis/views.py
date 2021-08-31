@@ -135,7 +135,6 @@ def register_for_event(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'POST' ])
-@permission_classes((IsAuthenticated, ))
 def user_list(request,format=None):
     """
     Create new User object.
