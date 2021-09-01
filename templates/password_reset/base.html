@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://unpkg.com/tailwindcss@1.2.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body class="h-screen overflow-hidden flex items-center justify-center" style="background: #FFFFFF;">
+    <section class="absolute w-full top-0 bottom-0">
+        <div class="absolute top-0 w-full h-full " style="background-image: url('/media/register_bg_7.png'); background-size: 100%; background-repeat: no-repeat;"></div>
+    
+
+
+<div class="container mx-auto px-4 h-full">
+        <div class="flex content-center items-center justify-center h-full">
+            <div class="w-full lg:w-4/12 px-4 pt-32">
+                <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
+                    <div class="rounded-t mb-0 px-6 py-6">
+                        {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    </section>
+</body>
+</html>
