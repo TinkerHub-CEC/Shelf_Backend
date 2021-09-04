@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
 from apis.models import User
 from django.shortcuts import render, redirect
@@ -43,7 +44,6 @@ def password_reset_request(request):
                     except BadHeaderError:
                         return HttpResponse('Invalid header found.')
                     return redirect ("/password_reset/done/")
-            else:
-                return HttpResponse('User not found.')
+        messages.error(request, 'An invalid email has been entered.')
     password_reset_form = PasswordResetForm()
     return render(request=request, template_name="password_reset/password_reset.html", context={"password_reset_form":password_reset_form})
