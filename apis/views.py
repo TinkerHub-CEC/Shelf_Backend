@@ -260,7 +260,7 @@ def user_registered_events(request, id, format=None):
         
         if request.method == 'GET':
             serializer = EventSerializer(registered_events, many=True)
-            return Response(serializer.data,status=status.HTTP_302_FOUND) 
+            return Response(serializer.data,status=status.HTTP_200_OK) 
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
