@@ -317,13 +317,6 @@ def active_registrations(request,format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#Custom JWT token to distinguish user type(normal or admin user)
-class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
-
-    serializer_class = CustomTokenObtainPairSerializer
-    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
-            
-
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
 def registration_check(request,id):
@@ -335,7 +328,17 @@ def registration_check(request,id):
             return Response(False)
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+#Custom JWT token to distinguish user type(normal or admin user)
+class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
+
+    serializer_class = CustomTokenObtainPairSerializer
+    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
+
+#Respond with 200 ok when pinged
+@api_view(['GET'])
+def ping(request) :
+    return Response(status=status.HTTP_200_OK)
         
        
     
