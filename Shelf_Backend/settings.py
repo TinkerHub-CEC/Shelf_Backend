@@ -146,6 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#-------- Email Backend -----------#
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='localhost')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
@@ -156,7 +157,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default='')
 def verified_callback(user):
     user.is_active = True
 
-
+#--------Verification Email Configuration---------#
 EMAIL_VERIFIED_CALLBACK = verified_callback
 EMAIL_FROM_ADDRESS = config('EMAIL_FROM_ADDRESS', default='')
 EMAIL_MAIL_SUBJECT = 'Confirm your email'
@@ -166,29 +167,38 @@ EMAIL_TOKEN_LIFE = 60 * 60
 EMAIL_PAGE_TEMPLATE = 'success.html'
 EMAIL_PAGE_DOMAIN = config('HOST_IP',default='')
 
+#-----------Setting up AWS credentials if in production--------#
+if not DEBUG:
+    AWS_ACCESS_KEY_ID =config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = 'shelfimages'
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_STATIC_LOCATION = 'static'
 
 
-#s3
-AWS_ACCESS_KEY_ID =config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'shelfimages'
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_STATIC_LOCATION = 'static'
-STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
-STATICFILES_STORAGE = 'Shelf_Backend.storage_backends.StaticStorage'
+#---------- Setting Static Directory ------------#
 
-AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
-DEFAULT_FILE_STORAGE = 'Shelf_Backend.storage_backends.PublicMediaStorage'
+if DEBUG:
+    STATIC_URL = '/static/'
+else:
+    AWS_STATIC_LOCATION = 'static'
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
+    STATICFILES_STORAGE = 'Shelf_Backend.storage_backends.StaticStorage'
+    AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+    DEFAULT_FILE_STORAGE = 'Shelf_Backend.storage_backends.PublicMediaStorage'
+    AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
+    PRIVATE_FILE_STORAGE = 'Shelf_Backend.storage_backends.PrivateMediaStorage'
 
-AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
-PRIVATE_FILE_STORAGE = 'Shelf_Backend.storage_backends.PrivateMediaStorage'
+
+#--------Database Backup ------------#
 DBBACKUP_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 DBBACKUP_FILENAME_TEMPLATE = datetime.now().strftime("Backup on %d-%m-%Y.psql")
-DBBACKUP_STORAGE_OPTIONS = {
-    "access_key": config('AWS_ACCESS_KEY_ID'),
-    "secret_key": config('AWS_SECRET_ACCESS_KEY'),
-    "bucket_name": 'databasebackupshelf'
-}
+if not DEBUG:
+    DBBACKUP_STORAGE_OPTIONS = {
+        "access_key": config('AWS_ACCESS_KEY_ID'),
+        "secret_key": config('AWS_SECRET_ACCESS_KEY'),
+        "bucket_name": 'databasebackupshelf'
+    }
