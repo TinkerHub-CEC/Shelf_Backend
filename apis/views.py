@@ -115,11 +115,11 @@ def register_for_event(request, id, format=None):
         if request.method == 'POST':
             event_obj.registrations.add(request.user)
     
-            # subject = f'You have registered for{event_obj.title}'
-            # message = f'Hi , thank you for registering in {event_obj.title}.'
-            # email_from = settings.EMAIL_FROM_ADDRESS
-            # recipient_list = [request.user.email ]
-            # send_mail(subject, message, email_from, recipient_list)
+            subject = f'You have registered for{event_obj.title}'
+            message = f'Hi , thank you for registering in {event_obj.title}.'
+            email_from = settings.EMAIL_FROM_ADDRESS
+            recipient_list = [request.user.email ]
+            send_mail(subject, message, email_from, recipient_list)
             
             user_email = { 'email': f'{request.user.email}' }
             calender.update_event(event_obj,user_email)
