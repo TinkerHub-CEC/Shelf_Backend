@@ -87,6 +87,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '30/min',
+        'user': '60/min'
+    }
 }
 
 SIMPLE_JWT = {
@@ -171,7 +179,7 @@ EMAIL_PAGE_DOMAIN = config('HOST_IP',default='')
 if not DEBUG:
     AWS_ACCESS_KEY_ID =config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = 'shelfimages'
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
@@ -200,5 +208,5 @@ if not DEBUG:
     DBBACKUP_STORAGE_OPTIONS = {
         "access_key": config('AWS_ACCESS_KEY_ID'),
         "secret_key": config('AWS_SECRET_ACCESS_KEY'),
-        "bucket_name": 'databasebackupshelf'
+        "bucket_name": config('AWS_DB_STORAGE_BUCKET_NAME')
     }
