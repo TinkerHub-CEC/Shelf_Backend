@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'storages',
     'easyaudit',
     'django_crontab',
+    'dbbackup',
 
     #default django apps
     'django.contrib.admin',
@@ -189,5 +190,5 @@ DBBACKUP_FILENAME_TEMPLATE = datetime.now().strftime("Backup on %d-%m-%Y.psql")
 DBBACKUP_STORAGE_OPTIONS = {
     "access_key": config('AWS_ACCESS_KEY_ID'),
     "secret_key": config('AWS_SECRET_ACCESS_KEY'),
-    "bucket_name": 'shelfimages'
+    "bucket_name": 'databasebackupshelf'
 }
