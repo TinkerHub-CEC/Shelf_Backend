@@ -31,23 +31,23 @@ def event_list(request, format=None):
     """
     List all events, or create a new event.
     """
-    try:
-        if request.method == 'GET':
-            events = Event.objects.order_by('-start_datetime')
-            serializer = EventSerializer(events, many=True)
-            return Response(serializer.data)
+   # try:
+    if request.method == 'GET':
+        events = Event.objects.order_by('-start_datetime')
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
 
-        elif request.method == 'POST':
-            serializer = EventSerializer(data=request.data)
-            if serializer.is_valid():
-                event_obj = serializer.save()
-                calender_event_id = calender.create_event(event_obj)
-                event_obj.calender_event_id = calender_event_id
-                event_obj.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    elif request.method == 'POST':
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            event_obj = serializer.save()
+            calender_event_id = calender.create_event(event_obj)
+            event_obj.calender_event_id = calender_event_id
+            event_obj.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # except Exception as e:
+    #     return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
