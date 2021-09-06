@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from apis import serializers
-from apis.models import Event, EventRegistration,User
+from apis.models import Event, EventRegistration ,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
-from datetime import timedelta
+from datetime import timedelta , datetime
 
 
 
@@ -337,7 +337,19 @@ def registration_check(request,id):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def active_registrations_with_attendance(request,format=None):
+    try: 
+        if request.method == 'GET':
+            active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            serializer = EventSerializer(active_with_attendance, many=True)
+            return Response(serializer.data) 
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
        
     
 
