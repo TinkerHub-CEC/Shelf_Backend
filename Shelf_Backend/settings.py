@@ -179,37 +179,37 @@ EMAIL_PAGE_TEMPLATE = 'success.html'
 EMAIL_PAGE_DOMAIN = config('HOST_IP',default='')
 
 #-----------Setting up AWS credentials if in production--------#
-# if not DEBUG:
-#     AWS_ACCESS_KEY_ID =config('AWS_ACCESS_KEY_ID')
-#     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-#     AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-#     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-#     AWS_S3_OBJECT_PARAMETERS = {
-#         'CacheControl': 'max-age=86400',
-#     }
-#     AWS_STATIC_LOCATION = 'static'
+if not DEBUG:
+    AWS_ACCESS_KEY_ID =config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_STATIC_LOCATION = 'static'
 
 
-# #---------- Setting Static Directory ------------#
+#---------- Setting Static Directory ------------#
 
-# if DEBUG:
-#     STATIC_URL = '/static/'
-# else:
-#     AWS_STATIC_LOCATION = 'static'
-#     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
-#     STATICFILES_STORAGE = 'Shelf_Backend.storage_backends.StaticStorage'
-#     AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
-#     DEFAULT_FILE_STORAGE = 'Shelf_Backend.storage_backends.PublicMediaStorage'
-#     AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
-#     PRIVATE_FILE_STORAGE = 'Shelf_Backend.storage_backends.PrivateMediaStorage'
+if DEBUG:
+    STATIC_URL = '/static/'
+else:
+    AWS_STATIC_LOCATION = 'static'
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
+    STATICFILES_STORAGE = 'Shelf_Backend.storage_backends.StaticStorage'
+    AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
+    DEFAULT_FILE_STORAGE = 'Shelf_Backend.storage_backends.PublicMediaStorage'
+    AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
+    PRIVATE_FILE_STORAGE = 'Shelf_Backend.storage_backends.PrivateMediaStorage'
 
 
-# #--------Database Backup ------------#
-# DBBACKUP_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# DBBACKUP_FILENAME_TEMPLATE = datetime.now().strftime("Backup on %d-%m-%Y.psql")
-# if not DEBUG:
-#     DBBACKUP_STORAGE_OPTIONS = {
-#         "access_key": config('AWS_ACCESS_KEY_ID'),
-#         "secret_key": config('AWS_SECRET_ACCESS_KEY'),
-#         "bucket_name": config('AWS_DB_STORAGE_BUCKET_NAME')
-#     }
+#--------Database Backup ------------#
+DBBACKUP_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DBBACKUP_FILENAME_TEMPLATE = datetime.now().strftime("Backup on %d-%m-%Y.psql")
+if not DEBUG:
+    DBBACKUP_STORAGE_OPTIONS = {
+        "access_key": config('AWS_ACCESS_KEY_ID'),
+        "secret_key": config('AWS_SECRET_ACCESS_KEY'),
+        "bucket_name": config('AWS_DB_STORAGE_BUCKET_NAME')
+    }
