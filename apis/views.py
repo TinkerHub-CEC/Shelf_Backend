@@ -22,6 +22,7 @@ from datetime import datetime
 #@permission_classes((IsAuthenticated, ))
 def test(request, format=None):
     #test new features here
+    r = 7/0
     return False
 
 @api_view(['GET', 'POST'])
