@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
-from datetime import timedelta , datetime
+from datetime import datetime
 
 
 
@@ -22,6 +22,7 @@ from datetime import timedelta , datetime
 #@permission_classes((IsAuthenticated, ))
 def test(request, format=None):
     #test new features here
+    r = 7/0
     return False
 
 @api_view(['GET', 'POST'])
@@ -115,11 +116,11 @@ def register_for_event(request, id, format=None):
         if request.method == 'POST':
             event_obj.registrations.add(request.user)
     
-            # subject = f'You have registered for{event_obj.title}'
-            # message = f'Hi , thank you for registering in {event_obj.title}.'
-            # email_from = settings.EMAIL_FROM_ADDRESS
-            # recipient_list = [request.user.email ]
-            # send_mail(subject, message, email_from, recipient_list)
+            subject = f'You have registered for{event_obj.title}'
+            message = f'Hi , thank you for registering in {event_obj.title}.'
+            email_from = settings.EMAIL_FROM_ADDRESS
+            recipient_list = [request.user.email ]
+            send_mail(subject, message, email_from, recipient_list)
             
             user_email = { 'email': f'{request.user.email}' }
             calender.update_event(event_obj,user_email)
@@ -135,7 +136,6 @@ def register_for_event(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'POST' ])
-@permission_classes((IsAuthenticated, ))
 def user_list(request,format=None):
     """
     Create new User object.
@@ -261,7 +261,7 @@ def user_registered_events(request, id, format=None):
         
         if request.method == 'GET':
             serializer = EventSerializer(registered_events, many=True)
-            return Response(serializer.data,status=status.HTTP_302_FOUND) 
+            return Response(serializer.data,status=status.HTTP_200_OK) 
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -318,13 +318,6 @@ def active_registrations(request,format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#Custom JWT token to distinguish user type(normal or admin user)
-class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
-
-    serializer_class = CustomTokenObtainPairSerializer
-    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
-            
-
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
 def registration_check(request,id):
@@ -350,6 +343,18 @@ def active_registrations_with_attendance(request,format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+#Custom JWT token to distinguish user type(normal or admin user)
+class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
+
+    serializer_class = CustomTokenObtainPairSerializer
+    token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
+
+#Respond with 200 ok when pinged
+@api_view(['GET'])
+def ping(request) :
+    return Response(status=status.HTTP_200_OK)
+        
        
     
 
