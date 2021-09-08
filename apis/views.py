@@ -338,10 +338,16 @@ def active_registrations_with_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
-            active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            # active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # serializer = EventSerializer(active_with_attendance, many=True)
+            # return Response(serializer.data) 
+
+            active_registrations = EventRegistration.objects.filter(user=request.user,event__reg_open_date__lt=datetime.now(),event__reg_close_date__gt=datetime.now())
+            active_with_attendance = active_registrations.event.all().exclude(attendance_method = 0)
             serializer = EventSerializer(active_with_attendance, many=True)
-            return Response(serializer.data) 
+            return Response(serializer.data)
+
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -61,7 +61,7 @@ def ping_database():
 
 def ping_webserver():
     try :
-        response = requests.get('http://127.0.0.1/ping/')
+        response = requests.get('http://127.0.0.1/api/ping/')
         print(response.status_code)
     except :
         subject = 'Shelf Web server is down!!!'
