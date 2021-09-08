@@ -219,7 +219,7 @@ def mark_attendance(request,id):
             user = request.POST.get('user')
             reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
-            return Response({'dev_data': f'Event Registration object with event id={id} and user id= {user} Doesnot Exist!', 'app_data': f'Something went wrong!', 'attendance': request.POST.get('attendance')}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'dev_data': f'Event Registration object with event id={id} and user id= {user} Doesnot Exist!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
         if serializer.is_valid():
