@@ -332,13 +332,13 @@ def registration_check(request,id):
         
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
-def active_registrations_with_attendance(request,format=None):
+def active_events_with_attendance(request,format=None):
 
     # This returns all events which the user have registered and have attendance method of checkbox or upload image
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            active_registrations = Event.objects.filter(start_datetime__lt=datetime.now(),end_datetime__gt=datetime.now())
             active_with_attendance = active_registrations.exclude(attendance_method = 0)
             serializer = EventSerializer(active_with_attendance, many=True)
             return Response(serializer.data) 
