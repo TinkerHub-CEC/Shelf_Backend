@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from apis import serializers
-from apis.models import Event, EventRegistration,User
+from apis.models import Event, EventRegistration ,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
@@ -22,10 +22,11 @@ from datetime import datetime
 #@permission_classes((IsAuthenticated, ))
 def test(request, format=None):
     #test new features here
+    r = 7/0
     return False
 
 @api_view(['GET', 'POST'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_list(request, format=None):
     """
     List all events, or create a new event.
@@ -50,7 +51,7 @@ def event_list(request, format=None):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_detail(request, id, format=None):
     """
     Retrieve, update or delete a event
@@ -81,7 +82,7 @@ def event_detail(request, id, format=None):
 
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def registered_users(request, id, format=None):
     """
     View registered users of a particular event, if event id is provided
@@ -94,7 +95,7 @@ def registered_users(request, id, format=None):
             return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
     
         if request.method == 'GET':
-            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'email', 'semester', 'batch'))
+            serializer = UserSerializer(registered_users, many=True, fields=('id', 'first_name', 'last_name', 'semester', 'batch', 'email'))
             return Response(serializer.data) 
         
     except Exception as e:
@@ -115,11 +116,11 @@ def register_for_event(request, id, format=None):
         if request.method == 'POST':
             event_obj.registrations.add(request.user)
     
-            # subject = f'You have registered for{event_obj.title}'
-            # message = f'Hi , thank you for registering in {event_obj.title}.'
-            # email_from = settings.EMAIL_FROM_ADDRESS
-            # recipient_list = [request.user.email ]
-            # send_mail(subject, message, email_from, recipient_list)
+            subject = f'You have registered for{event_obj.title}'
+            message = f'Hi , thank you for registering in {event_obj.title}.'
+            email_from = settings.EMAIL_FROM_ADDRESS
+            recipient_list = [request.user.email ]
+            send_mail(subject, message, email_from, recipient_list)
             
             user_email = { 'email': f'{request.user.email}' }
             calender.update_event(event_obj,user_email)
@@ -157,6 +158,7 @@ def user_list(request,format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
 def user_details(request, id, format=None):
     """
     Retrieve, delete, update a single users' details
@@ -188,8 +190,8 @@ def user_details(request, id, format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(['POST','GET'])
-#@permission_classes((IsAuthenticated, ))
+@api_view(['PUT','GET'])
+@permission_classes((IsAuthenticated, ))
 def mark_attendance(request,id):
 
     if request.method == 'GET':
@@ -212,12 +214,12 @@ def mark_attendance(request,id):
                 display.append(details)
         return Response(display)
 
-    if request.method == 'POST':
+    if request.method == 'PUT':
         try:
             user = request.POST.get('user')
             reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'dev_data': f'Event Registration object with event id={id} and user id= {user} Doesnot Exist!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
         if serializer.is_valid():
@@ -245,7 +247,7 @@ def upload_photo(request,id,format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view([ 'GET' ])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def user_registered_events(request, id, format=None):
     """
     Function that returns all the events that a user is registered to.
@@ -259,7 +261,7 @@ def user_registered_events(request, id, format=None):
         
         if request.method == 'GET':
             serializer = EventSerializer(registered_events, many=True)
-            return Response(serializer.data,status=status.HTTP_302_FOUND) 
+            return Response(serializer.data,status=status.HTTP_200_OK) 
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -285,7 +287,7 @@ def active_unregistered_events(request, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def event_registrations_count(request, id, format=None):
     """
     Total number of users registered in a particular event, if event id is provided.
@@ -305,7 +307,7 @@ def event_registrations_count(request, id, format=None):
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-#@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def active_registrations(request,format=None):
     try: 
         if request.method == 'GET':
@@ -316,21 +318,51 @@ def active_registrations(request,format=None):
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def registration_check(request,id):
+    try:
+        try:
+            instance = EventRegistration.objects.get(event=id, user=request.user)
+            return Response(True)
+        except:
+            return Response(False)
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def active_registrations_with_attendance(request,format=None):
+
+    # This returns all events which the user have registered and have attendance method of checkbox or upload image
+
+    try: 
+        if request.method == 'GET':
+            # active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            # active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # serializer = EventSerializer(active_with_attendance, many=True)
+            # return Response(serializer.data) 
+
+            active_registrations = EventRegistration.objects.filter(user=request.user,event__reg_open_date__lt=datetime.now(),event__reg_close_date__gt=datetime.now())
+            active_with_attendance = active_registrations.event.all().exclude(attendance_method = 0)
+            serializer = EventSerializer(active_with_attendance, many=True)
+            return Response(serializer.data)
+
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):
 
     serializer_class = CustomTokenObtainPairSerializer
     token_obtain_pair = jwt_views.TokenObtainPairView.as_view()
-            
 
-
-
-       
-       
-    
-
-
-        
+#Respond with 200 ok when pinged
+@api_view(['GET'])
+def ping(request) :
+    return Response(status=status.HTTP_200_OK)
         
        
     

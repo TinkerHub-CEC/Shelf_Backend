@@ -4,7 +4,9 @@ from django.db.models.base import Model
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 from django.db.models.enums import Choices
-
+from django.core.files import File
+from io import BytesIO
+from PIL import Image
 
 # Create your models here.
 
@@ -111,6 +113,12 @@ class EventRegistration(models.Model):
     event = models.ForeignKey('Event',related_name='evre',on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
     photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
+    def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
+        if self.photosubmission:
+            image = self.photosubmission
+            self.photosubmission = compress_image(image)
+        super(EventRegistration, self).save(*args, **kwargs)
+
     class Meta:
         unique_together = (('user','event'),)
 
@@ -133,3 +141,18 @@ class Event(models.Model) :
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
     attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
     calender_event_id = models.CharField(max_length=100)
+
+    def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
+        if self.poster:
+            image = self.poster
+            self.poster = compress_image(image)
+        super(Event, self).save(*args, **kwargs)
+
+def compress_image(image):
+    im = Image.open(image)
+    if im.mode != 'RGB':
+        im = im.convert('RGB')
+    im_io = BytesIO()
+    im.save(im_io, 'jpeg', quality=40,optimize=True)
+    new_image = File(im_io, name=image.name)
+    return new_image
