@@ -343,7 +343,7 @@ def active_registrations_with_attendance(request,format=None):
             # serializer = EventSerializer(active_with_attendance, many=True)
             # return Response(serializer.data) 
 
-            active_registrations = EventRegistration.objects.filter(user=request.user,event__reg_open_date__lt=datetime.now(),event__reg_close_date__gt=datetime.now())
+            active_registrations = EventRegistration.objects.filter(user=request.user,event__end_datetime__lt=datetime.now(),attendance=0)
             active_with_attendance = active_registrations.event.all().exclude(attendance_method = 0)
             serializer = EventSerializer(active_with_attendance, many=True)
             return Response(serializer.data)
