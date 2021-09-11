@@ -219,7 +219,7 @@ def mark_attendance(request,id):
             user = request.POST.get('user')
             reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
-            return Response({'dev_data': f'Event Registration object with given parameters not found!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'dev_data': f'Event Registration object with event id={id} and user id= {user} Doesnot Exist!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
         if serializer.is_valid():
@@ -338,10 +338,16 @@ def active_events_with_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(start_datetime__lt=datetime.now(),end_datetime__gt=datetime.now())
-            active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            # active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # serializer = EventSerializer(active_with_attendance, many=True)
+            # return Response(serializer.data) 
+
+            active_registrations = EventRegistration.objects.filter(user=request.user,event__end_datetime__=datetime.now(),attendance=0)
+            active_with_attendance = active_registrations.event.all().exclude(attendance_method = 0)
             serializer = EventSerializer(active_with_attendance, many=True)
-            return Response(serializer.data) 
+            return Response(serializer.data)
+
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

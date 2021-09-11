@@ -17,7 +17,7 @@ class UserAdmin(UserAdmin):
     filter_horizontal = ()
     list_filter = ()
     fieldsets = (
-        (None, {'fields': ('email', 'password','username','first_name','last_name',)}),
+        (None, {'fields': ('email', 'password','username','first_name','last_name','semester', 'batch')}),
         ('Permissions', {'fields': ('is_staff', 'is_active','is_admin',)}),
     )
     add_fieldsets = (
