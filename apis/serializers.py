@@ -48,4 +48,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['last_name'] = user.last_name
         token['username'] = user.username
         token['is_superuser'] = user.is_superuser
+        token['is_admin'] = user.is_admin
         return token

@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from apis import serializers
-from apis.models import Event, EventRegistration,User
+from apis.models import Event, EventRegistration ,User
 from apis.serializers import EventSerializer, EventRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
@@ -219,7 +219,7 @@ def mark_attendance(request,id):
             user = request.POST.get('user')
             reg_obj = EventRegistration.objects.get(user=user, event=id)
         except EventRegistration.DoesNotExist:
-            return Response({'dev_data': f'Event Registration object with given parameters not found!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'dev_data': f'Event Registration object with event id={id} and user id= {user} Doesnot Exist!', 'app_data': 'Something went wrong!'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = EventRegistrationSerializer(reg_obj, data=request.data, partial=True)
         if serializer.is_valid():
@@ -329,6 +329,29 @@ def registration_check(request,id):
             return Response(False)
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def active_registrations_with_attendance(request,format=None):
+
+    # This returns all events which the user have registered and have attendance method of checkbox or upload image
+
+    try: 
+        if request.method == 'GET':
+            # active_registrations = Event.objects.filter(reg_open_date__lt=datetime.now(),reg_close_date__gt=datetime.now())
+            # active_with_attendance = active_registrations.exclude(attendance_method = 0)
+            # serializer = EventSerializer(active_with_attendance, many=True)
+            # return Response(serializer.data) 
+
+            active_registrations = EventRegistration.objects.filter(user=request.user,event__end_datetime__=datetime.now(),attendance=0)
+            active_with_attendance = active_registrations.event.all().exclude(attendance_method = 0)
+            serializer = EventSerializer(active_with_attendance, many=True)
+            return Response(serializer.data)
+
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 #Custom JWT token to distinguish user type(normal or admin user)
 class CustomTokenObtainPairView(jwt_views.TokenObtainPairView):

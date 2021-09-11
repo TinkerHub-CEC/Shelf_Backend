@@ -44,11 +44,11 @@ def create_event(event_obj):
     'description': f'{event_obj.title}',
     'start': {
         'dateTime': f'{start_datetime}',
-        'timeZone': 'America/Los_Angeles',
+        'timeZone': 'Asia/Kolkata',
     },
     'end': {
         'dateTime': f'{end_datetime}',
-        'timeZone': 'America/Los_Angeles',
+        'timeZone': 'Asia/Kolkata',
     },
     'attendees': [
         {'email': 'tinkerhubshelf@gmail.com'},
