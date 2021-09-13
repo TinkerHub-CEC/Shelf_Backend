@@ -116,7 +116,7 @@ def register_for_event(request, id, format=None):
         if request.method == 'POST':
             event_obj.registrations.add(request.user)
     
-            subject = f'You have registered for{event_obj.title}'
+            subject = f'You have registered for {event_obj.title}'
             message = f'Hi , thank you for registering in {event_obj.title}.'
             email_from = settings.EMAIL_FROM_ADDRESS
             recipient_list = [request.user.email ]
@@ -338,7 +338,7 @@ def active_events_with_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0).exclude(attendance_method = 0)
+            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0).exclude(attendance_method = 0).filter(evre__photosubmission = '')
             serializer = EventSerializer(active_registrations, many=True)
             return Response(serializer.data)
 
