@@ -36,8 +36,8 @@ def create_event(event_obj):
             token.write(creds.to_json())
 
     service = build('calendar', 'v3', credentials=creds)
-    start_datetime = event_obj.start_datetime.utcnow().isoformat()
-    end_datetime = event_obj.end_datetime.utcnow().isoformat()
+    start_datetime = event_obj.start_datetime.isoformat()
+    end_datetime = event_obj.end_datetime.isoformat()
     event = {
     'summary': f'{event_obj.title}',
     'location': 'College Of engineering, Chengannur',

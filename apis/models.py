@@ -113,11 +113,11 @@ class EventRegistration(models.Model):
     event = models.ForeignKey('Event',related_name='evre',on_delete= models.CASCADE)
     attendance = models.IntegerField(default=0,choices=ATTENDANCE_ASSIGNMENT_CHOICES)
     photosubmission = models.ImageField(upload_to='pic',max_length = 200,null=True,blank=True)
-    def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
-        if self.photosubmission:
-            image = self.photosubmission
-            self.photosubmission = compress_image(image)
-        super(EventRegistration, self).save(*args, **kwargs)
+    # def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
+    #     if self.photosubmission:
+    #         image = self.photosubmission
+    #         self.photosubmission = compress_image(image)
+    #     super(EventRegistration, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (('user','event'),)
@@ -142,11 +142,11 @@ class Event(models.Model) :
     attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
     calender_event_id = models.CharField(max_length=100)
 
-    def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
-        if self.poster:
-            image = self.poster
-            self.poster = compress_image(image)
-        super(Event, self).save(*args, **kwargs)
+    # def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
+    #     if self.poster:
+    #         image = self.poster
+    #         self.poster = compress_image(image)
+    #     super(Event, self).save(*args, **kwargs)
 
 def compress_image(image):
     im = Image.open(image)

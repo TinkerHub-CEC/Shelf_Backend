@@ -30,11 +30,14 @@ class UserSerializer(DynamicFieldsModelSerializer):
         fields = ['id','username', 'first_name', 'last_name', 'email', 'password','roll_no','semester','batch']
 
 class EventSerializer(serializers.ModelSerializer):
+    reg_count = serializers.SerializerMethodField()
     class Meta:
         model = Event
         fields = ['id','title', 'start_datetime', 'end_datetime', 'location','max_participants', 'short_description', 'long_description', 'reg_open_date',
-                    'reg_close_date', 'poster', 'attendance_method']
+                    'reg_close_date', 'poster', 'attendance_method','reg_count']
 
+    def get_reg_count(self,obj):
+        return obj.registrations.count()
 class EventRegistrationSerializer(DynamicFieldsModelSerializer):
     class Meta :
         model = EventRegistration
