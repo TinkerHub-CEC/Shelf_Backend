@@ -344,7 +344,7 @@ def active_events_with_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0).exclude(attendance_method = 0).filter(evre__photosubmission = '')
+            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0,evre__photosubmission = '').exclude(attendance_method = 0)
             serializer = EventSerializer(active_registrations, many=True)
             return Response(serializer.data)
 
