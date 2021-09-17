@@ -13,6 +13,7 @@ from rest_framework_simplejwt import views as jwt_views
 from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
+from api_paginator.api_paginator import paginate
 from services.google_calender import calender_services as calender
 from datetime import datetime
 import threading
@@ -34,9 +35,18 @@ def event_list(request, format=None):
     """
     try:
         if request.method == 'GET':
+            try:
+                page = int(request.query_params.get('page'))
+            except:
+                page = 1
+            try:
+                limit = int(request.query_params.get('limit'))
+            except:
+                limit = 10
             events = Event.objects.order_by('-start_datetime')
             serializer = EventSerializer(events, many=True)
-            return Response(serializer.data)
+            result = paginate(serializer.data, page, limit)
+            return Response(result)
 
         elif request.method == 'POST':
             serializer = EventSerializer(data=request.data)
