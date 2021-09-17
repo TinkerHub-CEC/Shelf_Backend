@@ -23,6 +23,7 @@ urlpatterns = [
     path('events/active/all/',views.active_registrations),
     path('events/<int:id>/checkregistration/',views.registration_check),
     path('events/active/with_attendance/',views.active_events_with_attendance),
+    path('events/active/events_to_verify_attendance/',views.events_to_verify_attendance),
     
 
     #user details

@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
 from services.google_calender import calender_services as calender
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 
 
@@ -351,6 +351,24 @@ def active_events_with_attendance(request,format=None):
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def events_to_verify_attendance(request,format=None):
+
+    # This returns all events which the user have registered and have attendance method of checkbox or upload image
+
+    try: 
+        if request.method == 'GET':
+            active_registrations = Event.objects.filter(attendance_method = 2,end_datetime__range=[(datetime.now()-timedelta(days=10)),datetime.now()])
+            serializer = EventSerializer(active_registrations, many=True)
+            return Response(serializer.data)
+
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 #Custom JWT token to distinguish user type(normal or admin user)
