@@ -13,8 +13,9 @@ from rest_framework_simplejwt import views as jwt_views
 from django.conf import settings
 from django.core.mail import send_mail
 from django_email_verification import send_email as send_verification_mail
+from api_paginator.api_paginator import paginate
 from services.google_calender import calender_services as calender
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 
 
@@ -34,9 +35,18 @@ def event_list(request, format=None):
     """
     try:
         if request.method == 'GET':
+            try:
+                page = int(request.query_params.get('page'))
+            except:
+                page = 1
+            try:
+                limit = int(request.query_params.get('limit'))
+            except:
+                limit = 10
             events = Event.objects.order_by('-start_datetime')
             serializer = EventSerializer(events, many=True)
-            return Response(serializer.data)
+            result = paginate(serializer.data, page, limit)
+            return Response(result)
 
         elif request.method == 'POST':
             serializer = EventSerializer(data=request.data)
@@ -344,13 +354,31 @@ def active_events_with_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0).exclude(attendance_method = 0).filter(evre__photosubmission = '')
+            active_registrations = Event.objects.filter(evre__user=request.user,end_datetime__lt=datetime.now(),evre__attendance=0,evre__photosubmission = '').exclude(attendance_method = 0)
             serializer = EventSerializer(active_registrations, many=True)
             return Response(serializer.data)
 
     
     except Exception as e: 
         return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def events_to_verify_attendance(request,format=None):
+
+    # This returns all events which the user have registered and have attendance method of checkbox or upload image
+
+    try: 
+        if request.method == 'GET':
+            active_registrations = Event.objects.filter(attendance_method = 2,end_datetime__range=[(datetime.now()-timedelta(days=10)),datetime.now()])
+            serializer = EventSerializer(active_registrations, many=True)
+            return Response(serializer.data)
+
+    
+    except Exception as e: 
+        return Response({'dev_data': str(e), 'app_data': 'Something went wrong!'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 #Custom JWT token to distinguish user type(normal or admin user)
