@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.fields import CharField, ChoiceField
+from rest_framework.fields import CharField, ChoiceField, SerializerMethodField
 from apis.models import User, Event, EventRegistration
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -31,13 +31,21 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     reg_count = serializers.SerializerMethodField()
+    registration_status = SerializerMethodField()
+    
+    def get_reg_count(self, instance):
+        return instance.registrations.count()
+    def get_registration_status(self, instance):
+        try:
+            EventRegistration.objects.get(user=self.context.get('user_id'), event=instance.id)
+            return True
+        except:
+            return False
     class Meta:
         model = Event
         fields = ['id','title', 'start_datetime', 'end_datetime', 'location','max_participants', 'short_description', 'long_description', 'reg_open_date',
-                    'reg_close_date', 'poster', 'attendance_method','reg_count']
+                    'reg_close_date', 'poster', 'attendance_method','reg_count', 'registration_status']
 
-    def get_reg_count(self,obj):
-        return obj.registrations.count()
 class EventRegistrationSerializer(DynamicFieldsModelSerializer):
     class Meta :
         model = EventRegistration

@@ -44,7 +44,7 @@ def event_list(request, format=None):
             except:
                 limit = 10
             events = Event.objects.order_by('-start_datetime')
-            serializer = EventSerializer(events, many=True)
+            serializer = EventSerializer(events, many=True,context={'user_id': request.user.id})
             result = paginate(serializer.data, page, limit)
             return Response(result)
 
