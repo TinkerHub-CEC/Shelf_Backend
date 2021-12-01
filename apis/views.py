@@ -76,7 +76,7 @@ def event_detail(request, id, format=None):
             return Response({'dev_data': f'Event with id={id} does not exist!', 'app_data': 'Event not found!'},status=status.HTTP_404_NOT_FOUND)
     
         if request.method == 'GET':
-            serializer = EventSerializer(event_obj)
+            serializer = EventSerializer(event_obj, context={'user_id': request.user.id})
             return Response(serializer.data)
     
         elif request.method == 'PUT':
