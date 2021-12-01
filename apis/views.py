@@ -43,10 +43,17 @@ def event_list(request, format=None):
                 limit = int(request.query_params.get('limit'))
             except:
                 limit = 10
-            events = Event.objects.order_by('-start_datetime')
-            serializer = EventSerializer(events, many=True,context={'user_id': request.user.id})
-            result = paginate(serializer.data, page, limit)
-            return Response(result)
+            if request.user.is_admin == 0:
+                events = Event.objects.order_by('-start_datetime')
+                serializer = EventSerializer(events, many=True,context={'user_id': request.user.id})
+                result = paginate(serializer.data, page, limit)
+                return Response(result)
+            else :
+                events = Event.objects.filter(organization = request.user.organization)
+                serializer = EventSerializer(events, many=True,context={'user_id': request.user.id})
+                result = paginate(serializer.data, page, limit)
+                return Response(result)
+
 
         elif request.method == 'POST':
             serializer = EventSerializer(data=request.data)
@@ -371,7 +378,7 @@ def events_to_verify_attendance(request,format=None):
 
     try: 
         if request.method == 'GET':
-            active_registrations = Event.objects.filter(attendance_method = 2,end_datetime__range=[(datetime.now()-timedelta(days=10)),datetime.now()])
+            active_registrations = Event.objects.filter(organization = request.user.organization,attendance_method = 2,end_datetime__range=[(datetime.now()-timedelta(days=10)),datetime.now()])
             serializer = EventSerializer(active_registrations, many=True)
             return Response(serializer.data)
 
