@@ -10,6 +10,9 @@ from PIL import Image
 
 # Create your models here.
 
+class Organization(models.Model):
+    name = models.CharField(max_length=30,null=True)
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self,email,username,password=None):
@@ -73,6 +76,7 @@ class User(AbstractBaseUser):
     first_name   = models.CharField(max_length=30,unique=False)
     last_name    = models.CharField(max_length=30,unique=False)
     roll_no      = models.CharField(max_length=20,unique=False)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,null = True)
     
     semester = models.CharField(
         max_length = 10,
@@ -141,12 +145,16 @@ class Event(models.Model) :
     registrations = models.ManyToManyField (User, through='EventRegistration', related_name='registered_events')
     attendance_method = models.IntegerField(default=0,choices=ATTENDANCE_METHOD_CHOICES)
     calender_event_id = models.CharField(max_length=100)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,null = True)
+
 
     # def save(self,force_insert=False, force_update=False, using=None,*args, **kwargs):
     #     if self.poster:
     #         image = self.poster
     #         self.poster = compress_image(image)
     #     super(Event, self).save(*args, **kwargs)
+
+
 
 def compress_image(image):
     im = Image.open(image)
@@ -156,3 +164,6 @@ def compress_image(image):
     im.save(im_io, 'jpeg', quality=40,optimize=True)
     new_image = File(im_io, name=image.name)
     return new_image
+
+
+
