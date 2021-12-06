@@ -59,6 +59,8 @@ def event_list(request, format=None):
             serializer = EventSerializer(data=request.data)
             if serializer.is_valid():
                 event_obj = serializer.save()
+                event_obj.organization = request.user.organization
+                event_obj.save()
 
                 #Calling Function in a new thread to create a cooresponding event in google calender
                 t1 = threading.Thread(target=create_event_g_calender, args=(event_obj,))
