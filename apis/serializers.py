@@ -28,7 +28,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = User
         fields = ['id','username', 'first_name', 'last_name', 'email', 'password','roll_no','semester','batch']
-
+        extra_kwargs = {'password': {'write_only':True}}
 class EventSerializer(serializers.ModelSerializer):
     reg_count = serializers.SerializerMethodField()
     registration_status = SerializerMethodField()
